@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { OMDPService } from './OMDP.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,15 @@ export class AppComponent {
   handleKeyDown(event: KeyboardEvent) {
     if(event.key === "Escape")
       this.close();
+  }
+  constructor(private OMDP: OMDPService){
+    OMDP.searchMovie('Star wars')
+    .then(data => console.log(data)
+    );
+  }
+
+  ngOnInit(): void {
+    
   }
 
 
