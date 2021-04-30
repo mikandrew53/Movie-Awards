@@ -1,1 +1,225 @@
 /* You can add global styles to this file, and also import other style files */
+
+$accent-color: #008060;
+$background-colour: rgb(58, 58, 58);
+$background-colour: rgb(221, 221, 221);
+$font-color: #000;
+
+*{
+    box-sizing: border-box;
+}
+html, body { height: 100%; }
+body { 
+    margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; 
+    background-color: $background-colour;
+}
+
+
+.chosen-movies-toggle{
+    // transform: scale(2);
+    font-size: 50px;
+    color: $accent-color;
+    position: absolute;
+    top: 50px;
+    left: -20px;
+    transition: transform 150ms ease-in-out;
+    z-index: 14;
+    &:hover{
+        transform: translateX(10px);
+        cursor: pointer;
+    }
+}
+
+
+.app-side-bar{
+    width: 300px;
+    text-align: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    height: 100%;
+    transform: translateX(-100%);
+    will-change: transform;
+    transition: transform 250ms ease-in-out;
+    background-color: darken($color: $background-colour, $amount: 3%);
+    // background-color: rgba(0, 0, 0, 0.247);
+    z-index: 13;
+    padding-top: 50px;
+    overflow-y: auto;
+    .profile{
+        align-self: center;
+        opacity: 0;
+        will-change: opacity;
+        .profile-img{
+            width: 8rem;
+            border-radius: 5%;
+            margin-bottom: 0.5rem;
+        }
+        h1{
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 0.2rem;
+            color: $font-color;
+        }
+        p{
+            margin-bottom: 1rem;
+            font-weight: 400;
+            color: $accent-color;
+        }
+    }
+    .nav-links {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        list-style: none;
+        padding: 1rem 4rem;
+        li{
+            opacity: 0;
+            will-change: opacity;
+            will-change: transform;
+            width: 300px;
+            a{      
+                display: inline-block;
+                padding-top: 2rem;
+                padding-bottom: 2rem;
+                width: 300px;
+                -webkit-tap-highlight-color: transparent;
+                color: $font-color;
+                text-decoration: none; 
+                outline: none;
+                transition: all ease-in-out 250ms;
+                 &:hover{ 
+                    background-color: darken($color: $background-colour, $amount: 10%);
+                }
+                &:active{ background-color: rgba($color: $accent-color, $alpha: 0.5); }
+            }
+            .active{
+                color: $accent-color;
+            }
+        }
+    }
+}
+.nav-active { transform: translateX(0%); }
+
+.overlay{ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    // width: 0;
+    opacity: 0.2;
+    transition: opacity .3s;
+    background-color: #000;
+    // background-color: red;
+    z-index: 12;    
+    // background-color: $overlay-colour; 
+    // border-color: darken($color: $overlay-colour, $amount: 5%);
+}
+
+.search-screen{
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    justify-content: center;
+    // align-items: center;
+}
+
+.search-wrapper {
+    max-width: 500px;
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 200px;
+    box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
+    height: fit-content;
+    padding: 25px;
+    background-color: darken($color: $background-colour, $amount: 5);
+    border-radius: 4px;
+    // $background-colour
+}
+
+.title {
+    text-align: center;
+    width: fit-content;
+    color: rgb(190, 190, 190);
+    color: rgb(31, 31, 31);
+}
+
+.search-box {
+    width: fit-content;
+    margin-bottom: 20px;
+    
+}
+
+.form-group{
+    // width: 50%;
+    width: 400px;
+    position: relative;
+    height: 50px;
+    input {
+        box-shadow: 1px 3px 4px 1px rgb(0 0 0 / 20%);
+        width: 95%;
+        height: 100%;
+        padding-top: 10px;
+        padding: 15px 10px 5px 10px;
+        border: none;
+        outline: none;
+        background-color: darken($color: $accent-color, $amount: 5);
+        border-radius: 4px;
+        color: lighten($color: $accent-color, $amount: 10);
+        color: rgb(177, 177, 177);
+        color: #000;
+        caret-color: darken($color: $accent-color, $amount: 20);
+        font-size: 1rem;
+        &:focus + .label-placeholder .placeholder,
+        &:valid + .label-placeholder .placeholder{
+            transform: translateY(-100%);
+            font-size: 0.75rem;
+        }
+    }
+    
+    label {
+        pointer-events: none;
+        position: absolute;
+        bottom: 14px;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: darken($color: $accent-color, $amount: 10);
+        // border-bottom: 1px solid black;        
+    }
+
+    .placeholder{
+        position: absolute;
+        bottom: 0px;
+        left: 10px;
+        transition: all 0.3s ease;
+    }
+}
+
+.btn {
+    outline: none;
+    border: none;
+    padding: 7px 25px;
+    color: #fff;
+    color: #000;
+    background-color: darken($color: $accent-color, $amount: 20);
+    background-color: $accent-color;
+    border-radius: 4px;
+    transition: all 250ms ease-in-out;
+    box-shadow: 1px 3px 4px 1px rgb(0 0 0 / 20%);
+    &:hover {
+        cursor: pointer;
+        background-color: darken($color: $accent-color, $amount: 5);
+        box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
+        transform: scale(1.05);
+    }
+}
+
+
