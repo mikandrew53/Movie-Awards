@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +7,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   navActive: boolean = false;
+
+  @HostListener('window:keydown', ['$event'])
+  handleKeyDown(event: KeyboardEvent) {
+    if(event.key === "Escape")
+      this.close();
+  }
 
 
   closeAnimation() {
