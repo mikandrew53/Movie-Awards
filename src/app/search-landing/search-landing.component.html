@@ -4,13 +4,18 @@
             <h1>The Shoppies</h1>
         </div>
         <div class="search-box">
-            <div class="form-group">
-                <input class="input" type="text" autocomplete="off" name="search" required>
+            <div class="form-group" [ngClass]="{'padding-bottom': suggestions.length > 0}">
+                <input class="input" type="text" autocomplete="off" name="search" required (keyup)="onKeyUp($event)" #search>
                 <label for="search" class="label-placeholder" >
                     <span class="placeholder">Search OMDP</span>
                 </label>
-                <div class="suggestions">
+                <div class="suggestions" *ngIf="suggestions.length > 0">
                     <ul>
+                        <li class="line"></li>
+                        <li *ngFor="let suggestion of suggestions" class="suggestion">
+                            <img *ngIf="suggestion.img" src="{{suggestion.img}}" alt="">
+                            <p>{{suggestion.name}}</p> 
+                        </li>
                     </ul>
                 </div>
             </div>

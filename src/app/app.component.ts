@@ -1,5 +1,4 @@
 import { Component, HostListener } from '@angular/core';
-import { OMDPService } from './OMDP.service';
 
 @Component({
   selector: 'app-root',
@@ -14,17 +13,8 @@ export class AppComponent {
     if(event.key === "Escape")
       this.close();
   }
-  constructor(private OMDP: OMDPService){
-    OMDP.searchMovie('Star wars')
-    .then(data => console.log(data)
-    );
-  }
-
-  ngOnInit(): void {
-    
-  }
-
-
+  
+  
   closeAnimation() {
     // this.links.forEach((link: HTMLElement) => link.style.animation = '' );
       // this.profile.nativeElement.style.animation = '';

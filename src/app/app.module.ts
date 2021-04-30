@@ -4,11 +4,13 @@ import { AppComponent } from './app.component';
 import {MatIconModule} from '@angular/material/icon';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import { SearchLandingComponent } from './search-landing/search-landing.component';
+import { ResultsComponent } from './results/results.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SearchLandingComponent
+    SearchLandingComponent,
+    ResultsComponent
   ],
   imports: [
     BrowserModule,
