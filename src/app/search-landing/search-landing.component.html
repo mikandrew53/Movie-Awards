@@ -12,7 +12,7 @@
                 <div class="suggestions" *ngIf="suggestions.length > 0">
                     <ul>
                         <li class="line"></li>
-                        <li *ngFor="let suggestion of suggestions" class="suggestion">
+                        <li *ngFor="let suggestion of suggestions; let i=index" class="suggestion" (click)="suggestionClicked(i)">
                             <img *ngIf="suggestion.img" src="{{suggestion.img}}" alt="">
                             <p>{{suggestion.name}}</p> 
                         </li>
@@ -20,6 +20,6 @@
                 </div>
             </div>
         </div>
-        <button class="btn">Search</button>
+        <button class="btn" (click)="onSearch()" [disabled]="!searchValid" [ngClass]="{'btn-disabled': !searchValid}">Search</button>
     </div>
 </div>

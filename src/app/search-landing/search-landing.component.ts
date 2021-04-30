@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { OMDPService } from '../OMDP.service';
 interface movieSuggestion {
   name: string,
@@ -12,11 +13,12 @@ interface movieSuggestion {
   styleUrls: ['./search-landing.component.scss']
 })
 export class SearchLandingComponent implements OnInit {
+  searchValid = false;
   @ViewChild('search', {static: true}) search: ElementRef;
 
   suggestions:Array<movieSuggestion> = []
 
-  constructor(private OMDP: OMDPService){
+  constructor(private OMDP: OMDPService, private router: Router){
   }
 
   ngOnInit(): void {
@@ -34,17 +36,18 @@ export class SearchLandingComponent implements OnInit {
     let movieToSearch = this.search.nativeElement.value;
     this.OMDP.searchMovie(movieToSearch)
     .then(data => {
-      console.log(data);
-      
       if(data.Response === 'True' ){
+        this.OMDP.setSearchData(data);
+        console.log(this.OMDP.getSearchData());
+        
+        this.searchValid = true;
         let numberOfSuggestions = data.totalResults > 5 ? 5 : data.totalResults;
         let currentSuggestions = []
-        console.log();
         
         for(let i = 0; i < numberOfSuggestions; i++){
           let movie = data.Search[i];
           let img = '';
-          console.log(data);
+          // console.log(data);
           
           if(movie.Poster !== 'N/A')
             img = movie.Poster;
@@ -56,13 +59,24 @@ export class SearchLandingComponent implements OnInit {
             }
           )
         }
-        console.log(this.suggestions);
         
         this.suggestions = currentSuggestions;
-      }else 
-        this.suggestions = []
-    });
-    
+      }else {
+        this.suggestions = [] 
+        this.searchValid = false;
+      }
+    }); 
+  }
+
+  suggestionClicked(i){
+    this.search.nativeElement.value = this.suggestions[i].name;
+    this.OMDP.setSearchTerm(this.suggestions[i].name);
+    this.router.navigate(['results']);
+  }
+
+  onSearch(){
+    this.OMDP.setSearchTerm(this.search.nativeElement.value)
+    this.router.navigate(['results']);
   }
 
 }

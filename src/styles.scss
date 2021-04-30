@@ -41,11 +41,20 @@ p{
     color: $accent-color;
     position: absolute;
     top: 50px;
-    left: -20px;
+    right: -20px;
     transition: transform 150ms ease-in-out;
-    z-index: 14;
+    z-index: 13;
+    transform: rotate(180deg);
     &:hover{
-        transform: translateX(10px);
+        transform: translateX(-10px) rotate(180deg);
+        cursor: pointer;
+    }
+}
+
+.move-nav-label{
+    transform: translateX(-310px) rotate(180deg);
+    &:hover{
+        transform: translateX(-310px) rotate(180deg);
         cursor: pointer;
     }
 }
@@ -55,17 +64,17 @@ p{
     width: 300px;
     text-align: center;
     position: fixed;
-    left: 0;
+    right: -600px;
     top: 0;
     height: 100vh;
     height: 100%;
     transform: translateX(-100%);
     will-change: transform;
-    transition: transform 250ms ease-in-out;
+    transition: transform 150ms ease-in-out;
     background-color: darken($color: $background-colour, $amount: 3%);
     box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
     // background-color: rgba(0, 0, 0, 0.247);
-    z-index: 13;
+    z-index: 14;
     padding-top: 50px;
     overflow-y: auto;
     .profile{
@@ -122,7 +131,7 @@ p{
         }
     }
 }
-.nav-active { transform: translateX(0%); }
+.nav-active { transform: translateX(-600px); }
 
 .overlay{ 
     position: fixed;
@@ -253,7 +262,7 @@ p{
     color: #000;
     background-color: $accent-color;
     background-color: lighten($color: $accent-color, $amount: 3);
-    background-color: darken($color: rgb(175, 175, 175), $amount: 2);
+    // background-color: darken($color: rgb(175, 175, 175), $amount: 2);
     border-radius: 4px;
     transition: all 250ms ease-in-out;
     box-shadow: 1px 3px 4px 1px rgb(0 0 0 / 20%);
@@ -261,6 +270,7 @@ p{
         cursor: pointer;
         // background-color: darken($color: $accent-color, $anmount: 0);
         background-color: darken($color: rgb(175, 175, 175), $amount: 5);
+        background-color: lighten($color: $accent-color, $amount: 5);
         box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
         transform: scale(1.05);
     }
@@ -310,6 +320,16 @@ p{
         }
     }
     
+}
+
+.btn-disabled {
+    background-color: darken($color: rgb(175, 175, 175), $amount: 20);
+    &:hover {
+        transform: scale(1);
+        box-shadow: 1px 3px 4px 1px rgb(0 0 0 / 20%);
+        background-color: darken($color: rgb(175, 175, 175), $amount: 20);
+        cursor: not-allowed;
+    }
 }
 
 

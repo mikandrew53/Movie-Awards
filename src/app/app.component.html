@@ -1,6 +1,6 @@
-<mat-icon (click)="toggle()" class="chosen-movies-toggle">label</mat-icon>
+<mat-icon (click)="toggle()" class="chosen-movies-toggle" [ngClass]="{'move-nav-label': navActive}">label</mat-icon>
 <div class="app-side-bar" [ngClass]="{'nav-active': navActive}">
 </div>
 <div class="overlay" (click)="overlayClick()" [ngClass]="{'opacity': navActive}" *ngIf="navActive"></div>
 
-<app-search-landing></app-search-landing>
+<router-outlet></router-outlet>
