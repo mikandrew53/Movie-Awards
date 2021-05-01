@@ -12,23 +12,36 @@ export class ResultsComponent implements OnInit {
   suggestions = [] 
   constructor(private OMDP: OMDPService, private router: Router) { }
   searchValid = true;
+  inputFocus = false;
+  noResults = false;
   
   
   ngOnInit(): void {
-    if(!this.OMDP.getSearchTerm())
-    this.router.navigate(['']);
+    // if(!this.OMDP.getSearchTerm())
+    //   this.router.navigate(['']);
     this.search.nativeElement.value = this.OMDP.getSearchTerm();
 
     this.suggestions = [
-      {name: "Star Wars: Empire at War", img: "https://m.media-amazon.com/images/M/MV5BOGRiMDllMDUtOWFkZS00MGIyLWFkOTQtZjY2ZGUyNzY5YWRiXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0804909"},
-      {name: "Star Wars Empire at War: Forces of Corruption", img: "https://m.media-amazon.com/images/M/MV5BNGIxYTZiMmQtYjYzMS00ZmExLTljZDktMjE1ODY5OTJlYjlmXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0879261"},
-      {name: "Star Trek: Enterprise - In a Time of War", img: "https://m.media-amazon.com/images/M/MV5BMTk4NDA4MzUwM15BMl5BanBnXkFtZTgwMTg3NjY5MDE@._V1_SX300.jpg", imdbID: "tt3445408"},
-      {name: "Star Trek: Starfleet Command: Volume II: Empires at War", img: "https://m.media-amazon.com/images/M/MV5BOTJiYjQxZDQtOWM5NS00ZDZhLWJkYTUtNjQ3ZjdiMzM1MDYyXkEyXkFqcGdeQXVyMzMxNDQ0NQ@@._V1_SX300.jpg", imdbID: "tt0272306"},
-      {name: "Star Trek: The Next Generation - Survive and Suceed: An Empire at War", img: "https://m.media-amazon.com/images/M/MV5BMjM5ODY0MDQ2NF5BMl5BanBnXkFtZTgwMjQ5NDgwMDE@._V1_SX300.jpg", imdbID: "tt3060318"}
+      // {name: "Star Wars: Empire at War", img: "https://m.media-amazon.com/images/M/MV5BOGRiMDllMDUtOWFkZS00MGIyLWFkOTQtZjY2ZGUyNzY5YWRiXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0804909"},
+      // {name: "Star Wars Empire at War: Forces of Corruption", img: "https://m.media-amazon.com/images/M/MV5BNGIxYTZiMmQtYjYzMS00ZmExLTljZDktMjE1ODY5OTJlYjlmXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0879261"},
+      // {name: "Star Trek: Enterprise - In a Time of War", img: "https://m.media-amazon.com/images/M/MV5BMTk4NDA4MzUwM15BMl5BanBnXkFtZTgwMTg3NjY5MDE@._V1_SX300.jpg", imdbID: "tt3445408"},
+      // {name: "Star Trek: Starfleet Command: Volume II: Empires at War", img: "https://m.media-amazon.com/images/M/MV5BOTJiYjQxZDQtOWM5NS00ZDZhLWJkYTUtNjQ3ZjdiMzM1MDYyXkEyXkFqcGdeQXVyMzMxNDQ0NQ@@._V1_SX300.jpg", imdbID: "tt0272306"},
+      // {name: "Star Trek: The Next Generation - Survive and Suceed: An Empire at War", img: "https://m.media-amazon.com/images/M/MV5BMjM5ODY0MDQ2NF5BMl5BanBnXkFtZTgwMjQ5NDgwMDE@._V1_SX300.jpg", imdbID: "tt3060318"}
     ]
   }
 
-  onKeyUp(e:Event) {
+  onKeyUp(e?) {
+    console.log(e);
+    
+    if(e && e.key === "Enter"){
+      console.log('Enter');
+      
+      this.search.nativeElement.blur()
+      this.inputFocus = false;
+      if(!this.searchValid)
+        this.noResults = false;
+    }
+    
     let movieToSearch = this.search.nativeElement.value;
     this.OMDP.searchMovie(movieToSearch)
     .then(data => {
@@ -37,7 +50,9 @@ export class ResultsComponent implements OnInit {
         console.log(this.OMDP.getSearchData());
         
         this.searchValid = true;
-        let numberOfSuggestions = data.totalResults > 5 ? 5 : data.totalResults;
+        let numberOfSuggestions = data.totalResults > 10 ? 10 : data.totalResults;
+        console.log(numberOfSuggestions);
+        
         let currentSuggestions = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
@@ -45,8 +60,10 @@ export class ResultsComponent implements OnInit {
           let img = '';
           // console.log(data);
           
-          if(movie.Poster !== 'N/A')
-            img = movie.Poster;
+          // if(movie.Poster !== 'N/A')
+          img = movie.Poster;
+          if(movie.Poster === 'N/A')
+            continue;
           currentSuggestions.push(
             {
               name: movie.Title,
@@ -65,9 +82,28 @@ export class ResultsComponent implements OnInit {
   }
 
   suggestionClicked(i){
+    console.log('yo');
+    
     this.search.nativeElement.value = this.suggestions[i].name;
     this.OMDP.setSearchTerm(this.suggestions[i].name);
     this.router.navigate(['results']);
+  }
+
+  onFocus(){
+    this.inputFocus = true;
+
+    this.onKeyUp();
+
+  }
+  onFocusOut(){
+    console.log('yesit');
+    
+    if(this.search.nativeElement !== document.activeElement)
+      this.inputFocus = false;
+  }
+
+  searchClicked(){
+    this.onKeyUp({key: 'Enter'});
   }
 
 }

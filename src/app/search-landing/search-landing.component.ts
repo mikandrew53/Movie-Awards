@@ -49,8 +49,9 @@ export class SearchLandingComponent implements OnInit {
           let img = '';
           // console.log(data);
           
-          if(movie.Poster !== 'N/A')
-            img = movie.Poster;
+          if(movie.Poster === 'N/A')
+            continue;
+          img = movie.Poster;
           currentSuggestions.push(
             {
               name: movie.Title,

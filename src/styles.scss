@@ -39,7 +39,7 @@ p{
 .chosen-movies-toggle{
     font-size: 50px;
     color: $accent-color;
-    position: absolute;
+    position: fixed;
     top: 50px;
     right: -20px;
     transition: transform 150ms ease-in-out;
@@ -332,6 +332,38 @@ p{
     }
 }
 
+.results-form-group-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    .form-group{
+        width: 95%;
+        // margin-top: 5px;
+        // position: relative;
+        position: fixed;
+        top: -1px;
+
+        .mat-icon {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: $accent-color;
+            &:hover{
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+
+.results {
+    margin-top: 100px;
+    display: flex;
+    justify-content: center;
+    div {
+        width: 90%;
+    }
+}
 
 .padding-bottom {
     padding-bottom: 10px;
