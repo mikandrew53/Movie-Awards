@@ -12,7 +12,13 @@ export class OMDPService {
 
   constructor() { }
   async searchMovie (movie:string) {
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
+    // console.log(movie);
+    console.log(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
+    // movie = this.fliterString(movie)
+    movie.trim();
+    console.log(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
+    // let movieStr = this.fliterString(movie);
+    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie.trim()}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData = await OMDPResponse.json();
         return OMDPResponseData;
