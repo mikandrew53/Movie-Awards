@@ -2,6 +2,12 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { OMDPService } from '../OMDP.service';
 
+interface movieSuggestion {
+  name: string,
+  img: string,
+  imdbID?: string
+}
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -9,17 +15,22 @@ import { OMDPService } from '../OMDP.service';
 })
 export class ResultsComponent implements OnInit {
   @ViewChild('search', {static: true}) search: ElementRef;
-  suggestions = [] 
-  constructor(private OMDP: OMDPService, private router: Router) { }
+  suggestions: Array<movieSuggestion> = [];
   searchValid = true;
   inputFocus = false;
   noResults = false;
+  results: Array<movieSuggestion> = [];
+  isThereMoreResults: boolean = false;
   
+  constructor(private OMDB: OMDPService, private router: Router) { }
   
   ngOnInit(): void {
-    // if(!this.OMDP.getSearchTerm())
-    //   this.router.navigate(['']);
-    this.search.nativeElement.value = this.OMDP.getSearchTerm();
+    this.results = this.OMDB.getResults();
+    this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
+
+    if(!this.OMDB.getSearchTerm())
+      this.router.navigate(['']);
+    this.search.nativeElement.value = this.OMDB.getSearchTerm();
 
     this.suggestions = [
       // {name: "Star Wars: Empire at War", img: "https://m.media-amazon.com/images/M/MV5BOGRiMDllMDUtOWFkZS00MGIyLWFkOTQtZjY2ZGUyNzY5YWRiXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0804909"},
@@ -28,39 +39,33 @@ export class ResultsComponent implements OnInit {
       // {name: "Star Trek: Starfleet Command: Volume II: Empires at War", img: "https://m.media-amazon.com/images/M/MV5BOTJiYjQxZDQtOWM5NS00ZDZhLWJkYTUtNjQ3ZjdiMzM1MDYyXkEyXkFqcGdeQXVyMzMxNDQ0NQ@@._V1_SX300.jpg", imdbID: "tt0272306"},
       // {name: "Star Trek: The Next Generation - Survive and Suceed: An Empire at War", img: "https://m.media-amazon.com/images/M/MV5BMjM5ODY0MDQ2NF5BMl5BanBnXkFtZTgwMjQ5NDgwMDE@._V1_SX300.jpg", imdbID: "tt3060318"}
     ]
+    // this.results = this.suggestions;
   }
 
+
   onKeyUp(e?) {
-    console.log(e);
-    
     if(e && e.key === "Enter"){
-      console.log('Enter');
-      
       this.search.nativeElement.blur()
       this.inputFocus = false;
+      this.results = [...this.suggestions];
+      this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
+      this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
       if(!this.searchValid)
         this.noResults = false;
     }
     
     let movieToSearch = this.search.nativeElement.value;
-    this.OMDP.searchMovie(movieToSearch)
+    this.OMDB.searchMovie(movieToSearch)
     .then(data => {
       if(data.Response === 'True' ){
-        this.OMDP.setSearchData(data);
-        console.log(this.OMDP.getSearchData());
-        
+        this.OMDB.setSearchData(data);
         this.searchValid = true;
         let numberOfSuggestions = data.totalResults > 10 ? 10 : data.totalResults;
-        console.log(numberOfSuggestions);
-        
         let currentSuggestions = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
           let movie = data.Search[i];
           let img = '';
-          // console.log(data);
-          
-          // if(movie.Poster !== 'N/A')
           img = movie.Poster;
           if(movie.Poster === 'N/A')
             continue;
@@ -74,7 +79,10 @@ export class ResultsComponent implements OnInit {
         }
         
         this.suggestions = currentSuggestions;
+        // this.OMDB.setIsThereMoreResults(data.totalResults > 10);
+        
       }else {
+        // this.OMDB.setIsThereMoreResults(this.results.length > 10);
         this.suggestions = [] 
         this.searchValid = false;
       }
@@ -82,22 +90,30 @@ export class ResultsComponent implements OnInit {
   }
 
   suggestionClicked(i){
-    console.log('yo');
-    
     this.search.nativeElement.value = this.suggestions[i].name;
-    this.OMDP.setSearchTerm(this.suggestions[i].name);
-    this.router.navigate(['results']);
+    this.inputFocus = false;
+    this.OMDB.setSearchTerm(this.suggestions[i].name);
+    console.log(this.suggestions[i].imdbID);
+    this.isThereMoreResults = false;
+    this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
+
+    this.OMDB.getMovieShortPlot(this.suggestions[i].imdbID)
+    .then(data => {
+      console.log(data);
+      this.results = [{
+        name: data.Title,
+        img: data.Poster,
+        imdbID: data.imdbID
+      }]
+    });
   }
 
   onFocus(){
     this.inputFocus = true;
-
     this.onKeyUp();
 
   }
   onFocusOut(){
-    console.log('yesit');
-    
     if(this.search.nativeElement !== document.activeElement)
       this.inputFocus = false;
   }
