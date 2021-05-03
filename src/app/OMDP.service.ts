@@ -12,18 +12,26 @@ export class OMDPService {
 
   constructor() { }
   async searchMovie (movie:string) {
-    // console.log(movie);
-    console.log(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
-    // movie = this.fliterString(movie)
-    movie.trim();
-    console.log(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
-    // let movieStr = this.fliterString(movie);
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie.trim()}&apikey=a285c6a9`);
+    if(movie[movie.length-1] === ' ' || movie[0] === ' ')
+      movie = movie.trim();
+    
+    this.searchTerm = movie
+    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData = await OMDPResponse.json();
         return OMDPResponseData;
     }else
         throw `Error: ${OMDPResponse.status} ${OMDPResponse.statusText}`;
+  }
+
+  async getNextPage(page) {
+   
+   const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&apikey=a285c6a9`);
+      if(OMDPResponse.ok){
+    const OMDPResponseData = await OMDPResponse.json();
+      return OMDPResponseData;
+  }else
+      throw `Error: ${OMDPResponse.status} ${OMDPResponse.statusText}`;
   }
 
   async getMovieShortPlot(id:string) {

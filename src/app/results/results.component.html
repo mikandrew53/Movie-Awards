@@ -21,7 +21,7 @@
     <div class="results-grid-wrapper">
         <div class="results-wrapper" >
             <img *ngFor="let result of results" src="{{result.img}}" alt="">
-            <div class="more" *ngIf="isThereMoreResults">
+            <div class="more" *ngIf="isThereMoreResults" (click)="moreClicked()">
                 <p>More</p>
             </div>
         </div>

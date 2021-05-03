@@ -21,6 +21,7 @@ export class ResultsComponent implements OnInit {
   noResults = false;
   results: Array<movieSuggestion> = [];
   isThereMoreResults: boolean = false;
+  page = 2;
   
   constructor(private OMDB: OMDPService, private router: Router) { }
   
@@ -45,6 +46,7 @@ export class ResultsComponent implements OnInit {
 
   onKeyUp(e?) {
     if(e && e.key === "Enter"){
+      this.page = 2;
       this.search.nativeElement.blur()
       this.inputFocus = false;
       this.results = [...this.suggestions];
@@ -57,6 +59,8 @@ export class ResultsComponent implements OnInit {
     let movieToSearch = this.search.nativeElement.value;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
+      console.log(data);
+      
       if(data.Response === 'True' ){
         this.OMDB.setSearchData(data);
         this.searchValid = true;
@@ -79,10 +83,8 @@ export class ResultsComponent implements OnInit {
         }
         
         this.suggestions = currentSuggestions;
-        // this.OMDB.setIsThereMoreResults(data.totalResults > 10);
         
       }else {
-        // this.OMDB.setIsThereMoreResults(this.results.length > 10);
         this.suggestions = [] 
         this.searchValid = false;
       }
@@ -106,6 +108,36 @@ export class ResultsComponent implements OnInit {
         imdbID: data.imdbID
       }]
     });
+  }
+
+  moreClicked() {
+    this.OMDB.getNextPage(this.page)
+    .then(data => {
+      if(data.Response === 'True'){
+        this.page += 1;
+        let j = 0;
+        for(let i = 0; i < data.Search.length; i++){
+          let movie = data.Search[i];
+          let img = '';
+          img = movie.Poster;
+          if(movie.Poster === 'N/A')
+            continue;
+          this.results.push({
+              name: movie.Title,
+              img: img,
+              imdbID: movie.imdbID
+            });
+            j += 1;
+        }
+        console.log(j);
+        
+        if(j === 10 && (this.results.length < data.totalResults))
+          this.isThereMoreResults = true;
+        else 
+          this.isThereMoreResults = false;
+        this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
+      }
+    })
   }
 
   onFocus(){

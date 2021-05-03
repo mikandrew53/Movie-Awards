@@ -44,23 +44,17 @@ this.suggestions = [
       
     .then(data => {
       if(data.Response === 'True' ){
-        console.log(data);
-        
         this.suggestions = [];
         this.results = [];
         this.OMDB.setResults(this.results);
         this.OMDB.setSearchData(data);
         this.searchValid = true;
-        // let numberOfSuggestions = data.totalResults > 5 ? 5 : data.totalResults;
         let numberOfSuggestions = data.Search.length;
-
         let currentSuggestions = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
           let movie = data.Search[i];
           let img = '';
-          // console.log(data);
-          
           if(movie.Poster === 'N/A')
             continue;
           img = movie.Poster;
@@ -93,9 +87,6 @@ this.suggestions = [
         this.OMDB.setIsThereMoreResults(false);
       }
     }); 
-
-    console.log(this.OMDB.getResults());
-    
   }
 
   suggestionClicked(i){
