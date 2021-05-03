@@ -55,7 +55,7 @@ this.suggestions = [
         for(let i = 0; i < numberOfSuggestions; i++){
           let movie = data.Search[i];
           let img = '';
-          if(movie.Poster === 'N/A')
+          if(movie.Poster === 'N/A' || movie.Type !== "movie")
             continue;
           img = movie.Poster;
           if(i < 5){

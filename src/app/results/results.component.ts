@@ -28,9 +28,11 @@ export class ResultsComponent implements OnInit {
   ngOnInit(): void {
     this.results = this.OMDB.getResults();
     this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
-
+    
     if(!this.OMDB.getSearchTerm())
       this.router.navigate(['']);
+    if(this.results.length === 0)
+      this.onKeyUp({key: 'Enter'});
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
 
     this.suggestions = [
@@ -45,17 +47,6 @@ export class ResultsComponent implements OnInit {
 
 
   onKeyUp(e?) {
-    if(e && e.key === "Enter"){
-      this.page = 2;
-      this.search.nativeElement.blur()
-      this.inputFocus = false;
-      this.results = [...this.suggestions];
-      this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
-      this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
-      if(!this.searchValid)
-        this.noResults = false;
-    }
-    
     let movieToSearch = this.search.nativeElement.value;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
@@ -71,7 +62,7 @@ export class ResultsComponent implements OnInit {
           let movie = data.Search[i];
           let img = '';
           img = movie.Poster;
-          if(movie.Poster === 'N/A')
+          if(movie.Poster === 'N/A' || movie.Type !== "movie")
             continue;
           currentSuggestions.push(
             {
@@ -87,6 +78,16 @@ export class ResultsComponent implements OnInit {
       }else {
         this.suggestions = [] 
         this.searchValid = false;
+      }
+      if(e && e.key === "Enter"){
+        this.page = 2;
+        this.search.nativeElement.blur()
+        this.inputFocus = false;
+        this.results = [...this.suggestions];
+        this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
+        this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
+        if(!this.searchValid)
+          this.noResults = false;
       }
     }); 
   }
