@@ -6,7 +6,8 @@ import { OMDPService } from '../OMDP.service';
 interface movieSuggestion {
   name: string,
   img: string,
-  imdbID?: string
+  imdbID?: string,
+  inLibrary: boolean
 }
 
 @Component({
@@ -98,7 +99,8 @@ export class ResultsComponent implements OnInit {
       this.results = [{
         name: data.Title,
         img: data.Poster,
-        imdbID: data.imdbID
+        imdbID: data.imdbID,
+        inLibrary: false
       }]
     });
   }
@@ -118,7 +120,8 @@ export class ResultsComponent implements OnInit {
           this.results.push({
               name: movie.Title,
               img: img,
-              imdbID: movie.imdbID
+              imdbID: movie.imdbID,
+              inLibrary: false
             });
             j += 1;
         }
@@ -148,9 +151,13 @@ export class ResultsComponent implements OnInit {
   }
 
   addToLibrary(index){
-    console.log(this.results);
-    
-    this.library.addToLibrary(this.results[index].imdbID, this.results[index].img );
+    console.log(this.results[index].inLibrary);
+    this.results[index].inLibrary = false;
+    console.log(this.results[index].inLibrary);
+    setTimeout(() => {
+      this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img)
+    }, 0); ;
+    console.log(this.results[index].inLibrary);
     
   }
 

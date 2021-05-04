@@ -1,8 +1,9 @@
 <mat-icon (click)="toggle()" class="chosen-movies-toggle" [ngClass]="{'move-nav-label': navActive}">label</mat-icon>
+<div [ngClass]="{'hide': !(libraryUi.length > 0), 'move-num-movies': navActive}"  class="numberOfMovies"><p>{{libraryUi.length}}</p></div>
 <div class="app-side-bar" [ngClass]="{'nav-active': navActive}">
-    <div class="library-item-wrapper" *ngFor="let item of libraryUi; let i = index;">
+    <div class="library-item-wrapper" *ngFor="let item of libraryUi; let i = index;" [ngClass]="{'hide': item.hide}">
         <mat-icon class="remove-btn" (click)="removeFromLibrary(i)">remove</mat-icon>
-        <img src="{{item}}" alt="" >
+        <img src="{{item.img}}" alt="" >
     </div>
 </div>
 <div class="overlay" (click)="overlayClick()" [ngClass]="{'opacity': navActive}" *ngIf="navActive"></div>

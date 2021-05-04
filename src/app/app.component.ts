@@ -1,5 +1,9 @@
 import { Component, HostListener } from '@angular/core';
 import { LibraryService } from './library.service';
+interface libraryItem {
+  img: string,
+  hide: boolean
+}
 
 @Component({
   selector: 'app-root',
@@ -8,7 +12,7 @@ import { LibraryService } from './library.service';
 })
 export class AppComponent {
   navActive: boolean = false;
-  libraryUi: Array<string> = []
+  libraryUi: Array<libraryItem> = []
 
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
@@ -22,14 +26,18 @@ export class AppComponent {
   ngOnInit(): void {
     // this.libraryUi = this.library.getLibrary();
     this.library.libChanged.subscribe((imgUrl) => {
-      this.libraryUi.push(imgUrl);
+      this.libraryUi.push({
+        img: imgUrl,
+        hide: false });
     });
   }
 
   removeFromLibrary(i){
     console.log(this.libraryUi);
-    this.library.removeFromLibrary(this.libraryUi[i]);
-    this.libraryUi.splice(i, 1);
+    this.libraryUi[i].hide = true;
+    this.library.removeFromLibrary(this.libraryUi[i].img);
+    setTimeout(() => this.libraryUi.splice(i, 1), 400);
+    ;
   }
   
   closeAnimation() {

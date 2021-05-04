@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-import { url } from 'inspector';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 
 
 @Injectable({
@@ -20,7 +19,9 @@ export class LibraryService {
       this.index += 1;
       this.library[movieId] = imgUrl;
       this.libChanged.next(imgUrl);
+      return true;
     }
+    return false;
   }
   
   removeFromLibrary(url:string){
