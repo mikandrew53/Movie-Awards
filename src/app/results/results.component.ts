@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { LibraryService } from '../library.service';
 import { OMDPService } from '../OMDP.service';
 
 interface movieSuggestion {
@@ -23,7 +24,7 @@ export class ResultsComponent implements OnInit {
   isThereMoreResults: boolean = false;
   page = 2;
   
-  constructor(private OMDB: OMDPService, private router: Router) { }
+  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService) { }
   
   ngOnInit(): void {
     this.results = this.OMDB.getResults();
@@ -34,15 +35,6 @@ export class ResultsComponent implements OnInit {
     if(this.results.length === 0)
       this.onKeyUp({key: 'Enter'});
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
-
-    this.suggestions = [
-      // {name: "Star Wars: Empire at War", img: "https://m.media-amazon.com/images/M/MV5BOGRiMDllMDUtOWFkZS00MGIyLWFkOTQtZjY2ZGUyNzY5YWRiXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0804909"},
-      // {name: "Star Wars Empire at War: Forces of Corruption", img: "https://m.media-amazon.com/images/M/MV5BNGIxYTZiMmQtYjYzMS00ZmExLTljZDktMjE1ODY5OTJlYjlmXkEyXkFqcGdeQXVyMzM4MjM0Nzg@._V1_SX300.jpg", imdbID: "tt0879261"},
-      // {name: "Star Trek: Enterprise - In a Time of War", img: "https://m.media-amazon.com/images/M/MV5BMTk4NDA4MzUwM15BMl5BanBnXkFtZTgwMTg3NjY5MDE@._V1_SX300.jpg", imdbID: "tt3445408"},
-      // {name: "Star Trek: Starfleet Command: Volume II: Empires at War", img: "https://m.media-amazon.com/images/M/MV5BOTJiYjQxZDQtOWM5NS00ZDZhLWJkYTUtNjQ3ZjdiMzM1MDYyXkEyXkFqcGdeQXVyMzMxNDQ0NQ@@._V1_SX300.jpg", imdbID: "tt0272306"},
-      // {name: "Star Trek: The Next Generation - Survive and Suceed: An Empire at War", img: "https://m.media-amazon.com/images/M/MV5BMjM5ODY0MDQ2NF5BMl5BanBnXkFtZTgwMjQ5NDgwMDE@._V1_SX300.jpg", imdbID: "tt3060318"}
-    ]
-    // this.results = this.suggestions;
   }
 
 
@@ -50,7 +42,7 @@ export class ResultsComponent implements OnInit {
     let movieToSearch = this.search.nativeElement.value;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
-      console.log(data);
+      // console.log(data);
       
       if(data.Response === 'True' ){
         this.OMDB.setSearchData(data);
@@ -96,13 +88,13 @@ export class ResultsComponent implements OnInit {
     this.search.nativeElement.value = this.suggestions[i].name;
     this.inputFocus = false;
     this.OMDB.setSearchTerm(this.suggestions[i].name);
-    console.log(this.suggestions[i].imdbID);
+    // console.log(this.suggestions[i].imdbID);
     this.isThereMoreResults = false;
     this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
 
     this.OMDB.getMovieShortPlot(this.suggestions[i].imdbID)
     .then(data => {
-      console.log(data);
+      // console.log(data);
       this.results = [{
         name: data.Title,
         img: data.Poster,
@@ -130,7 +122,7 @@ export class ResultsComponent implements OnInit {
             });
             j += 1;
         }
-        console.log(j);
+        // console.log(j);
         
         if(j === 10 && (this.results.length < data.totalResults))
           this.isThereMoreResults = true;
@@ -153,6 +145,18 @@ export class ResultsComponent implements OnInit {
 
   searchClicked(){
     this.onKeyUp({key: 'Enter'});
+  }
+
+  addToLibrary(index){
+    console.log(this.results);
+    
+    this.library.addToLibrary(this.results[index].imdbID, this.results[index].img );
+    
+  }
+
+  moreInfo(index){
+    console.log('img clicked');
+    
   }
 
 }

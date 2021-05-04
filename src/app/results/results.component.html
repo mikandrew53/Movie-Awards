@@ -20,9 +20,9 @@
 <div class="results" (click)="onFocusOut()">
     <div class="results-grid-wrapper">
         <div class="results-wrapper" >
-            <div class="img-wrapper" *ngFor="let result of results">
-                <mat-icon class="add-btn">add</mat-icon>
-                <img src="{{result.img}}" alt="" class="movie-img-results">
+            <div class="img-wrapper" *ngFor="let result of results; let i = index;">
+                <mat-icon class="add-btn" (click)="addToLibrary(i)">add</mat-icon>
+                <img src="{{result.img}}" alt="" class="movie-img-results" (click)="moreInfo(i)">
             </div>
             <div class="more" *ngIf="isThereMoreResults" (click)="moreClicked()">
                 <p>More</p>

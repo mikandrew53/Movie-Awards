@@ -1,4 +1,5 @@
 import { Component, HostListener } from '@angular/core';
+import { LibraryService } from './library.service';
 
 @Component({
   selector: 'app-root',
@@ -7,13 +8,29 @@ import { Component, HostListener } from '@angular/core';
 })
 export class AppComponent {
   navActive: boolean = false;
+  libraryUi: Array<string> = []
 
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     if(event.key === "Escape")
       this.close();
   }
+
+  constructor(private library:LibraryService){}
   
+
+  ngOnInit(): void {
+    // this.libraryUi = this.library.getLibrary();
+    this.library.libChanged.subscribe((imgUrl) => {
+      this.libraryUi.push(imgUrl);
+    });
+  }
+
+  removeFromLibrary(i){
+    console.log(this.libraryUi);
+    this.library.removeFromLibrary(this.libraryUi[i]);
+    this.libraryUi.splice(i, 1);
+  }
   
   closeAnimation() {
     // this.links.forEach((link: HTMLElement) => link.style.animation = '' );

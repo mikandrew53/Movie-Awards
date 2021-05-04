@@ -393,13 +393,12 @@ p{
             position: absolute;
             top: 10px;
             right: 10px;
-            // z-index: 10;
             border-radius: 50%;
-            background-color: rgba($color: #fff, $alpha: .6);
+            background-color: rgba($color: $accent-color, $alpha: .8);
             transition: all 200ms ease-in-out;
             &:hover{
-                background-color: rgba($color: #fff, $alpha: .8);
-                transform: scale(1.05);
+                background-color: rgba($color: $accent-color, $alpha: 1);
+                transform: scale(1.1);
             }
         }
     }
@@ -426,6 +425,23 @@ p{
             color: #fff;
         }
         // background-color: red;
+    }
+}
+
+.library-item-wrapper{
+    position: relative;
+    .remove-btn{
+        background-color: rgba($color: rgb(150, 4, 4), $alpha: .8);
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        border-radius: 50%;
+        transition: all 200ms ease-in-out;
+        &:hover {
+            cursor: pointer;
+            transform: scale(1.1);
+            background-color: rgba($color: rgb(150, 4, 4), $alpha: 1);
+        }
     }
 }
 
