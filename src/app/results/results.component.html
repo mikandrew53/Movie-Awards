@@ -22,7 +22,7 @@
         <div class="results-wrapper" >
             <div class="img-wrapper" *ngFor="let result of results; let i = index;">
                 <mat-icon class="add-btn" (click)="addToLibrary(i)">add</mat-icon>
-                <img src="{{result.img}}" alt="" class="movie-img-results" (click)="moreInfo(i)">
+                <img src="{{result.img}}" alt="" class="movie-img-results" (click)="openDialog(i)">
                 <div class="added" [ngClass]="{'show': result.inLibrary}">
                     <mat-icon class="check">check</mat-icon>
                 </div>

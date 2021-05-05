@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibraryService } from '../library.service';
 import { OMDPService } from '../OMDP.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+
 
 interface movieSuggestion {
   name: string,
@@ -25,7 +27,7 @@ export class ResultsComponent implements OnInit {
   isThereMoreResults: boolean = false;
   page = 2;
   
-  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService) { }
+  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, public dialog: MatDialog) { }
   
   ngOnInit(): void {
     this.results = this.OMDB.getResults();
@@ -36,6 +38,10 @@ export class ResultsComponent implements OnInit {
     if(this.results.length === 0)
       this.onKeyUp({key: 'Enter'});
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
+  }
+
+  openDialog(): void {
+  //  this.dialog.open();
   }
 
 
@@ -165,6 +171,9 @@ export class ResultsComponent implements OnInit {
     console.log('img clicked');
     
   }
+
+
+ 
 
 }
 

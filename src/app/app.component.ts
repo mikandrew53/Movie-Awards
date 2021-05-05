@@ -13,6 +13,7 @@ interface libraryItem {
 export class AppComponent {
   navActive: boolean = false;
   libraryUi: Array<libraryItem> = []
+  tempLibrary = []
 
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
@@ -25,11 +26,30 @@ export class AppComponent {
 
   ngOnInit(): void {
     // this.libraryUi = this.library.getLibrary();
+    
+    if(this.library.index != 0){
+      for(let movieId in this.library.getLibrary()){
+        this.libraryUi.push( {
+          img: this.library.getLibrary()[movieId],
+          hide: false
+        });
+      }
+    }
+    
+    
     this.library.libChanged.subscribe((imgUrl) => {
       this.libraryUi.push({
         img: imgUrl,
         hide: false });
-    });
+      });
+    }
+    
+    ngAfterViewInit(): void {
+      //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+      // console.log(this.libraryUi[0]);
+    //Add 'implements AfterViewInit' to the class.
+      // this.libraryUi = this.tempLibrary;
+  // }
   }
 
   removeFromLibrary(i){

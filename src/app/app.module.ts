@@ -6,6 +6,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { SearchLandingComponent } from './search-landing/search-landing.component';
 import { ResultsComponent } from './results/results.component';
 import { AppRoutingModule } from './app.routing.module';
+import {MatDialogModule} from '@angular/material/dialog';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 @NgModule({
   declarations: [
@@ -17,7 +20,9 @@ import { AppRoutingModule } from './app.routing.module';
     BrowserModule,
     MatIconModule,
     MatSidenavModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatDialogModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
