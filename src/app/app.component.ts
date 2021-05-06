@@ -2,7 +2,8 @@ import { Component, HostListener } from '@angular/core';
 import { LibraryService } from './library.service';
 interface libraryItem {
   img: string,
-  hide: boolean
+  hide: boolean,
+  imdbID: string
 }
 
 @Component({
@@ -25,21 +26,39 @@ export class AppComponent {
   
 
   ngOnInit(): void {
-    if(this.library.index != 0){
+    console.log(this.library.getIndex());
+    
+    if(this.library.getIndex() != 0){
       for(let movieId in this.library.getLibrary()){
         this.libraryUi.push( {
           img: this.library.getLibrary()[movieId],
-          hide: false
+          hide: false,
+          imdbID: movieId
         });
       }
     }
     
     
-    this.library.libChanged.subscribe((imgUrl) => {
+    this.library.libChanged.subscribe((movie) => {
       this.libraryUi.push({
-        img: imgUrl,
-        hide: false });
+        img: movie.img,
+        hide: false,
+        imdbID: movie.imdbID
       });
+      });
+
+      this.library.movieRemoved.subscribe(data => {
+        if(!data.removedFromLibrary){
+          console.log('Removed From Library');
+          
+          for(let i = 0; i < this.libraryUi.length; i++){
+            if(this.libraryUi[i].imdbID === data.imdbID){
+                this.libraryUi.splice(i, 1);
+              break;
+            }
+          }
+        }
+      })
     }
     
     ngAfterViewInit(): void {
@@ -54,7 +73,7 @@ export class AppComponent {
   removeFromLibrary(i){
     console.log(this.libraryUi);
     this.libraryUi[i].hide = true;
-    this.library.removeFromLibrary(this.libraryUi[i].img);
+    this.library.removeFromLibrary(this.libraryUi[i].img, true);
     setTimeout(() => this.libraryUi.splice(i, 1), 400);
     ;
   }

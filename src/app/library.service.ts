@@ -1,4 +1,3 @@
-import { stringify } from '@angular/compiler/src/util';
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -7,19 +6,23 @@ import { Subject } from 'rxjs';
   providedIn: 'root'
 })
 export class LibraryService {
-  private library = {};
-  index:number = 0;
-  libChanged = new Subject<string>();
-  movieRemoved = new Subject<string>()
+  private library;
+  private index:number;
+  libChanged = new Subject<{img: string, imdbID: string}>();
+  movieRemoved = new Subject<{imdbID: string, removedFromLibrary:boolean}>()
+
   constructor() {
     let libraryData = JSON.parse(localStorage.getItem('libraryData'));
     let index = JSON.parse(localStorage.getItem('numberOfMoviesInLibrary'));
-    console.log(libraryData);
     if(libraryData && index){
       this.library = libraryData;
       this.index = index;
-    
+    }else {
+      this.index = 0;
+      this.library = {};
     }
+    // console.log(this.index);
+    
   }
 
   addToLibrary (movieId: string, imgUrl:string){
@@ -28,7 +31,7 @@ export class LibraryService {
       
       this.index += 1;
       this.library[movieId] = imgUrl;
-      this.libChanged.next(imgUrl);
+      this.libChanged.next({img: imgUrl, imdbID: movieId});
       localStorage.setItem('libraryData', JSON.stringify(this.library));
       localStorage.setItem('numberOfMoviesInLibrary', JSON.stringify(this.index));
       return true;
@@ -40,11 +43,13 @@ export class LibraryService {
     return this.library[movieId];
   }
   
-  removeFromLibrary(url:string){
+  removeFromLibrary(url:string, removedFromLibrary?:boolean){
+    if(removedFromLibrary === undefined)
+      removedFromLibrary = false;
     for(let movieId in this.library){
       console.log(movieId);
       if(this.library[movieId] == url){
-        this.movieRemoved.next(movieId);
+        this.movieRemoved.next({imdbID: movieId, removedFromLibrary: removedFromLibrary});
         delete this.library[movieId];
         break;
       }
@@ -56,5 +61,10 @@ export class LibraryService {
 
   getLibrary(){
     return this.library;
+  }
+  getIndex(){
+    console.log(this.index);
+    
+    return this.index;
   }
 }

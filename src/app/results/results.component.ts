@@ -2,8 +2,6 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibraryService } from '../library.service';
 import { OMDPService } from '../OMDP.service';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-
 
 interface movieSuggestion {
   name: string,
@@ -75,50 +73,58 @@ export class ResultsComponent implements OnInit {
   modalActive = false;
   movie:movie;
   dialogMovieIndex:number;
+  numMoviesInLibrary = 0;
   
-  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, public dialog: MatDialog) { }
+  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService) { }
   
   ngOnInit(): void {
-    this.movie = {
-      name: '',
-      img: '',
-      imdbID: '',
-      inLibrary: false,
-      actors: '',
-      plot: '',
-      language: '',
-      year: '',
-      rated: '',
-      releaseDate: '',
-      runtime: '',
-      genre: '',
-      director: '',
-      active: false
-    }
-
-    this.results = this.OMDB.getResults();
-    if(this.results){
-      for(let i = 0; i < this.results.length; i++){
-        this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
-      }
-    }
-    this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
-    
-    if(!this.OMDB.getSearchTerm())
+    if(!this.OMDB.getSearchTerm()){
       this.router.navigate(['']);
-    if(this.results.length === 0)
-      this.onKeyUp({key: 'Enter'});
-    this.search.nativeElement.value = this.OMDB.getSearchTerm();
-
-    this.library.movieRemoved.subscribe(id => {
-      for(let i = 0; i < this.results.length; i++){
-        if(this.results[i].imdbID === id){
-          this.results[i].inLibrary = false;
-          break;
-        }
-          
+    }else {
+      this.movie = {
+        name: '',
+        img: '',
+        imdbID: '',
+        inLibrary: false,
+        actors: '',
+        plot: '',
+        language: '',
+        year: '',
+        rated: '',
+        releaseDate: '',
+        runtime: '',
+        genre: '',
+        director: '',
+        active: false
       }
-    })
+  
+      this.numMoviesInLibrary = this.library.getIndex();
+      
+  
+      this.results = this.OMDB.getResults();
+      if(this.results){
+        for(let i = 0; i < this.results.length; i++){
+          this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
+        }
+      }
+      this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
+      
+      if(this.results.length === 0)
+        this.onKeyUp({key: 'Enter'});
+      this.search.nativeElement.value = this.OMDB.getSearchTerm();
+  
+      this.library.movieRemoved.subscribe(data => {
+        if(data.removedFromLibrary){
+          for(let i = 0; i < this.results.length; i++){
+            if(this.results[i].imdbID === data.imdbID){
+              this.results[i].inLibrary = false;
+              this.numMoviesInLibrary -= 1;
+              break;
+            }   
+          }
+        }
+      })
+    }
   }
 
   openDialog(i): void {
@@ -232,7 +238,8 @@ export class ResultsComponent implements OnInit {
         name: data.Title,
         img: data.Poster,
         imdbID: data.imdbID,
-        inLibrary: this.library.checkIfMovieInLibrary(data.imdbID)
+        inLibrary: this.library.checkIfMovieInLibrary(data.imdbID),
+        animate: false
       }]
     });
   }
@@ -286,29 +293,41 @@ export class ResultsComponent implements OnInit {
   }
 
   addToLibrary(index?){
-    if(!index){
+    if(index === undefined){
       index = this.dialogMovieIndex;
       this.movie.inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
       this.results[index].inLibrary = this.movie.inLibrary;
+      this.results[index].animate = false;
+      if(this.results[index].inLibrary){
+        this.numMoviesInLibrary += 1;
+        console.log(this.numMoviesInLibrary);  
+        console.log('added');
+      }
       return;
     }
+    
     this.results[index].inLibrary = false;
-    setTimeout(() => {
       this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
       this.results[index].animate = this.results[index].inLibrary;
-    }, 0);
-    console.log(this.results[index].inLibrary);
-    
+      if(this.results[index].inLibrary){
+        this.numMoviesInLibrary += 1;
+        console.log(this.numMoviesInLibrary);  
+      }
+      // console.log(this.numMoviesInLibrary);
+    }
+
+    removeFromLibrary(index?:number){
+      if(index === undefined){
+        index = this.dialogMovieIndex;
+        this.movie.inLibrary = false;
+      }
+      this.library.removeFromLibrary(this.results[index].img);  
+      this.results[index].animate = false;
+      this.results[index].inLibrary = false;
+      this.numMoviesInLibrary -= 1;
+      console.log(this.numMoviesInLibrary);  
+    }
   }
 
-  moreInfo(index){
-    console.log('img clicked');
-    
-  }
-
-
- 
-
-}
 
 

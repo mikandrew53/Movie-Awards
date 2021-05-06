@@ -440,9 +440,9 @@ p{
                 background-color: rgba($color: $accent-color, $alpha: 1);
                 transform: scale(1.1);
             }
+            
         }
-
-        .added {
+               .added {
             position: absolute;
             top: 0;
             z-index: 10;
@@ -602,12 +602,17 @@ p{
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        h3 {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
         
         p {
             color: #fff;
             span {
-                text-decoration: underline;
-                color: darken($color: $background-colour, $amount: 50);
+                // text-decoration: underline;
+                color: darken($color: $background-colour, $amount: 20);
             }
         }
         .add-btn {
@@ -629,6 +634,17 @@ p{
 
             }
         }
+        .btn-disabled {
+            background-color: darken($color: rgb(175, 175, 175), $amount: 20);
+            &:hover {
+                transform: scale(1);
+                box-shadow: 1px 3px 4px 1px rgb(0 0 0 / 20%);
+                background-color: darken($color: rgb(175, 175, 175), $amount: 20);
+                cursor: not-allowed;
+            }
+        }
+
+
     }
 }
 
