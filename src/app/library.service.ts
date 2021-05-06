@@ -34,6 +34,10 @@ export class LibraryService {
     }
     return false;
   }
+
+  checkIfMovieInLibrary(movieId: string){
+    return this.library[movieId];
+  }
   
   removeFromLibrary(url:string){
     console.log(url);

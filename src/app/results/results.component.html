@@ -33,3 +33,27 @@
         </div>
     </div>
 </div>
+
+<div class="more-info-modal" [ngClass]="{'more-info-modal-active': modalActive}">
+    <mat-icon class="back-btn" (click)="closeModal()">clear</mat-icon>
+    <div class="info" *ngIf="movie.active">
+         <img *ngIf="movie.img" src="{{movie.img}}" alt=""> 
+         <div class="movie-data">
+            <div class="movie-data-content">
+                <p *ngIf="movie.name !== ''">{{movie.name}}</p>
+                <p *ngIf="movie.actors !== ''">{{movie.actors}}</p>
+                <p *ngIf="movie.director !== ''">{{movie.director}}</p>
+                <p *ngIf="movie.genre !== ''">{{movie.genre}}</p>
+                <p *ngIf="movie.language !== ''">{{movie.language}}</p>
+                <p *ngIf="movie.plot !== ''">{{movie.plot}}</p>
+                <p *ngIf="movie.rated !== ''">{{movie.rated}}</p>
+                <p *ngIf="movie.releaseDate !== ''">{{movie.releaseDate}}</p>
+                <p *ngIf="movie.runtime !== ''">{{movie.runtime}}</p>
+                <p *ngIf="movie.year !== ''">{{movie.year}}</p>
+            </div>
+            <button class="add-btn">Nominate</button>
+        </div>
+    </div>
+</div>
+<div [ngClass]="{'overlay': modalActive}" (click)="closeModal()"></div>
+

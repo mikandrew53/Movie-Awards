@@ -6,23 +6,25 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import { SearchLandingComponent } from './search-landing/search-landing.component';
 import { ResultsComponent } from './results/results.component';
 import { AppRoutingModule } from './app.routing.module';
-import {MatDialogModule} from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MoreInfoComponent } from './results/more-info/more-info';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     SearchLandingComponent,
-    ResultsComponent
+    ResultsComponent,
+    MoreInfoComponent
   ],
   imports: [
     BrowserModule,
     MatIconModule,
     MatSidenavModule,
     AppRoutingModule,
-    MatDialogModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

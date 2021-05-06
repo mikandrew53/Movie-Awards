@@ -25,8 +25,6 @@ export class AppComponent {
   
 
   ngOnInit(): void {
-    // this.libraryUi = this.library.getLibrary();
-    
     if(this.library.index != 0){
       for(let movieId in this.library.getLibrary()){
         this.libraryUi.push( {
@@ -44,13 +42,6 @@ export class AppComponent {
       });
     }
     
-    ngAfterViewInit(): void {
-      //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-      // console.log(this.libraryUi[0]);
-    //Add 'implements AfterViewInit' to the class.
-      // this.libraryUi = this.tempLibrary;
-  // }
-  }
 
   removeFromLibrary(i){
     console.log(this.libraryUi);

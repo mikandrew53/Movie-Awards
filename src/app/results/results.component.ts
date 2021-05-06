@@ -12,6 +12,51 @@ interface movieSuggestion {
   inLibrary: boolean
 }
 
+interface responseData {
+  Actors: string,
+  Awards: string
+  BoxOffice: string,
+  Country: string,
+  DVD: string,
+  Director: string,
+  Genre: string,
+  Language: string,
+  Metascore: string,
+  Plot: string,
+  Poster: string,
+  Production: string,
+  Rated: string,
+  Ratings: [],
+  Released: string,
+  Response: string,
+  Runtime: string,
+  Title: string,
+  Type: string,
+  Website: string,
+  Writer: string,
+  Year: string,
+  imdbID: string,
+  imdbRating: string,
+  imdbVotes: string
+}
+
+interface movie{
+  name: string,
+  img: string,
+  imdbID?: string,
+  inLibrary: boolean,
+  actors: string,
+  plot: string,
+  language: string,
+  year: string,
+  rated: string,
+  releaseDate: string,
+  runtime: string,
+  genre: string,
+  director: string,
+  active: boolean
+}
+
 @Component({
   selector: 'app-results',
   templateUrl: './results.component.html',
@@ -26,10 +71,29 @@ export class ResultsComponent implements OnInit {
   results: Array<movieSuggestion> = [];
   isThereMoreResults: boolean = false;
   page = 2;
+  modalActive = false;
+  movie:movie;
   
   constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, public dialog: MatDialog) { }
   
   ngOnInit(): void {
+    this.movie = {
+      name: '',
+      img: '',
+      imdbID: '',
+      inLibrary: false,
+      actors: '',
+      plot: '',
+      language: '',
+      year: '',
+      rated: '',
+      releaseDate: '',
+      runtime: '',
+      genre: '',
+      director: '',
+      active: false
+    }
+
     this.results = this.OMDB.getResults();
     this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
     
@@ -40,8 +104,49 @@ export class ResultsComponent implements OnInit {
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
   }
 
-  openDialog(): void {
-  //  this.dialog.open();
+  openDialog(i): void {
+    this.OMDB.getMovieShortPlot(this.results[i].imdbID)
+    .then((data:responseData) => {
+      console.log(data);
+      if(data.Response === "True"){
+        if(data.Actors !== 'N/A')
+          this.movie['actors'] = data.Actors;
+        if(data.Plot !== 'N/A' )
+          this.movie['plot']= data.Plot;
+        if(data.Language !== 'N/A')
+          this.movie['language'] = data.Language;
+        if(data.Year !== 'N/A')
+          this.movie['year'] = data.Year;
+        if(data.imdbRating !== 'N/A')
+          this.movie['rated'] = data.imdbRating;
+        if(data.Released !== 'N/A')
+          this.movie['releaseDate'] = data.Released;
+        if(data.Runtime !== 'N/A')
+          this.movie['runtime'] = data.Runtime;
+        if(data.Genre !== 'N/A')
+          this.movie['genre'] = data.Genre;
+        if(data.Director !== 'N/A')
+          this.movie['director'] = data.Director;
+      }
+    });
+
+    this.movie['name'] = this.results[i].name;
+    this.movie['img'] = this.results[i].img;
+    this.movie.imdbID = this.results[i].imdbID;
+    this.movie.active = true;
+    this.modalActive = true;
+    this.movie.inLibrary = this.library.checkIfMovieInLibrary(this.movie.imdbID);
+    document.body.style.overflowY = 'hidden';
+
+
+  }
+  closeModal(): void {
+    // this.dialog.open(MoreInfoComponent, {data: {movie: this.results[i]}});
+    this.modalActive = false;
+    setTimeout(() => {
+      this.movie.active = false;
+    }, 250);
+    document.body.style.overflowY = 'auto';
   }
 
 
@@ -162,7 +267,7 @@ export class ResultsComponent implements OnInit {
     console.log(this.results[index].inLibrary);
     setTimeout(() => {
       this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img)
-    }, 0); ;
+    }, 0);
     console.log(this.results[index].inLibrary);
     
   }
