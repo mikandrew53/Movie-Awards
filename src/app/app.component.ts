@@ -13,8 +13,8 @@ interface libraryItem {
 export class AppComponent {
   navActive: boolean = false;
   libraryUi: Array<libraryItem> = []
-  tempLibrary = []
-
+  tempLibrary = [];
+  
   @HostListener('window:keydown', ['$event'])
   handleKeyDown(event: KeyboardEvent) {
     if(event.key === "Escape")
@@ -25,11 +25,6 @@ export class AppComponent {
   
 
   ngOnInit(): void {
-<<<<<<< HEAD
-=======
-    // this.libraryUi = this.library.getLibrary();
-    
->>>>>>> 627c0b9ed33bf5be5c0ddbf76c79b151647169b1
     if(this.library.index != 0){
       for(let movieId in this.library.getLibrary()){
         this.libraryUi.push( {

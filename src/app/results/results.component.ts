@@ -9,7 +9,8 @@ interface movieSuggestion {
   name: string,
   img: string,
   imdbID?: string,
-  inLibrary: boolean
+  inLibrary: boolean,
+  animate: boolean
 }
 
 interface responseData {
@@ -73,6 +74,7 @@ export class ResultsComponent implements OnInit {
   page = 2;
   modalActive = false;
   movie:movie;
+  dialogMovieIndex:number;
   
   constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, public dialog: MatDialog) { }
   
@@ -95,6 +97,11 @@ export class ResultsComponent implements OnInit {
     }
 
     this.results = this.OMDB.getResults();
+    if(this.results){
+      for(let i = 0; i < this.results.length; i++){
+        this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
+      }
+    }
     this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
     
     if(!this.OMDB.getSearchTerm())
@@ -102,9 +109,20 @@ export class ResultsComponent implements OnInit {
     if(this.results.length === 0)
       this.onKeyUp({key: 'Enter'});
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
+
+    this.library.movieRemoved.subscribe(id => {
+      for(let i = 0; i < this.results.length; i++){
+        if(this.results[i].imdbID === id){
+          this.results[i].inLibrary = false;
+          break;
+        }
+          
+      }
+    })
   }
 
   openDialog(i): void {
+    this.dialogMovieIndex = i;
     this.OMDB.getMovieShortPlot(this.results[i].imdbID)
     .then((data:responseData) => {
       console.log(data);
@@ -160,7 +178,7 @@ export class ResultsComponent implements OnInit {
         this.OMDB.setSearchData(data);
         this.searchValid = true;
         let numberOfSuggestions = data.totalResults > 10 ? 10 : data.totalResults;
-        let currentSuggestions = []
+        let currentSuggestions:Array<movieSuggestion> = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
           let movie = data.Search[i];
@@ -172,7 +190,9 @@ export class ResultsComponent implements OnInit {
             {
               name: movie.Title,
               img: img,
-              imdbID: movie.imdbID
+              imdbID: movie.imdbID,
+              inLibrary: this.library.checkIfMovieInLibrary(movie.imdbID),
+              animate: false
             }
           )
         }
@@ -188,6 +208,7 @@ export class ResultsComponent implements OnInit {
         this.search.nativeElement.blur()
         this.inputFocus = false;
         this.results = [...this.suggestions];
+
         this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
         this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
         if(!this.searchValid)
@@ -211,12 +232,14 @@ export class ResultsComponent implements OnInit {
         name: data.Title,
         img: data.Poster,
         imdbID: data.imdbID,
-        inLibrary: false
+        inLibrary: this.library.checkIfMovieInLibrary(data.imdbID)
       }]
     });
   }
 
   moreClicked() {
+    console.log('clicked');
+    
     this.OMDB.getNextPage(this.page)
     .then(data => {
       if(data.Response === 'True'){
@@ -232,7 +255,8 @@ export class ResultsComponent implements OnInit {
               name: movie.Title,
               img: img,
               imdbID: movie.imdbID,
-              inLibrary: false
+              inLibrary: this.library.checkIfMovieInLibrary(movie.imdbID),
+              animate: false
             });
             j += 1;
         }
@@ -261,12 +285,17 @@ export class ResultsComponent implements OnInit {
     this.onKeyUp({key: 'Enter'});
   }
 
-  addToLibrary(index){
-    console.log(this.results[index].inLibrary);
+  addToLibrary(index?){
+    if(!index){
+      index = this.dialogMovieIndex;
+      this.movie.inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
+      this.results[index].inLibrary = this.movie.inLibrary;
+      return;
+    }
     this.results[index].inLibrary = false;
-    console.log(this.results[index].inLibrary);
     setTimeout(() => {
-      this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img)
+      this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
+      this.results[index].animate = this.results[index].inLibrary;
     }, 0);
     console.log(this.results[index].inLibrary);
     

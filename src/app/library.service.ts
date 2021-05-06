@@ -10,6 +10,7 @@ export class LibraryService {
   private library = {};
   index:number = 0;
   libChanged = new Subject<string>();
+  movieRemoved = new Subject<string>()
   constructor() {
     let libraryData = JSON.parse(localStorage.getItem('libraryData'));
     let index = JSON.parse(localStorage.getItem('numberOfMoviesInLibrary'));
@@ -40,10 +41,10 @@ export class LibraryService {
   }
   
   removeFromLibrary(url:string){
-    console.log(url);
     for(let movieId in this.library){
       console.log(movieId);
       if(this.library[movieId] == url){
+        this.movieRemoved.next(movieId);
         delete this.library[movieId];
         break;
       }

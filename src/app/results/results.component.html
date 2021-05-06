@@ -21,9 +21,10 @@
     <div class="results-grid-wrapper">
         <div class="results-wrapper" >
             <div class="img-wrapper" *ngFor="let result of results; let i = index;">
-                <mat-icon class="add-btn" (click)="addToLibrary(i)">add</mat-icon>
+                <mat-icon class="add-btn" (click)="addToLibrary(i)" *ngIf="!result.inLibrary">add</mat-icon>
+                <mat-icon class="add-btn remove-btn" *ngIf="result.inLibrary">remove</mat-icon>
                 <img src="{{result.img}}" alt="" class="movie-img-results" (click)="openDialog(i)">
-                <div class="added" [ngClass]="{'show': result.inLibrary}">
+                <div class="added" [ngClass]="{'show': result.inLibrary && result.animate}">
                     <mat-icon class="check">check</mat-icon>
                 </div>
             </div>
@@ -39,19 +40,21 @@
     <div class="info" *ngIf="movie.active">
          <img *ngIf="movie.img" src="{{movie.img}}" alt=""> 
          <div class="movie-data">
+             <h3 *ngIf="movie.name !== ''">{{movie.name}}</h3>
             <div class="movie-data-content">
-                <p *ngIf="movie.name !== ''">{{movie.name}}</p>
-                <p *ngIf="movie.actors !== ''">{{movie.actors}}</p>
-                <p *ngIf="movie.director !== ''">{{movie.director}}</p>
-                <p *ngIf="movie.genre !== ''">{{movie.genre}}</p>
-                <p *ngIf="movie.language !== ''">{{movie.language}}</p>
-                <p *ngIf="movie.plot !== ''">{{movie.plot}}</p>
-                <p *ngIf="movie.rated !== ''">{{movie.rated}}</p>
-                <p *ngIf="movie.releaseDate !== ''">{{movie.releaseDate}}</p>
-                <p *ngIf="movie.runtime !== ''">{{movie.runtime}}</p>
-                <p *ngIf="movie.year !== ''">{{movie.year}}</p>
+
+                <p *ngIf="movie.actors !== ''"><span>Actors:</span> {{movie.actors}}</p>
+                <p *ngIf="movie.director !== ''"><span>Directors:</span> {{movie.director}}</p>
+                <p *ngIf="movie.genre !== ''"><span>Genre:</span> {{movie.genre}}</p>
+                <p *ngIf="movie.language !== ''"><span>Language:</span> {{movie.language}}</p>
+                <p *ngIf="movie.plot !== ''"><span>Plot:</span> {{movie.plot}}</p>
+                <p *ngIf="movie.rated !== ''"><span>IMDB Rating:</span> {{movie.rated}}</p>
+                <p *ngIf="movie.releaseDate !== ''"><span>Release Date:</span> {{movie.releaseDate}}</p>
+                <p *ngIf="movie.runtime !== ''"><span>Runtime:</span> {{movie.runtime}}</p>
+                <p *ngIf="movie.year !== ''"><span>Year:</span> {{movie.year}}</p>
             </div>
-            <button class="add-btn">Nominate</button>
+            <button class="add-btn" (click)="addToLibrary()" *ngIf="!movie.inLibrary">Nominate</button>
+            <button class="add-btn" *ngIf="movie.inLibrary">Remove</button>
         </div>
     </div>
 </div>
