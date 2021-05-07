@@ -25,6 +25,7 @@
                     <mat-icon class="add-btn" (click)="addToLibrary(i)" *ngIf="!result.inLibrary && numMoviesInLibrary < 5">add</mat-icon>
                     <mat-icon class="add-btn remove-btn" *ngIf="result.inLibrary" (click)="removeFromLibrary(i)">remove</mat-icon>
                     <img src="{{result.img}}" alt="" class="movie-img-results" (click)="openDialog(i)">
+                    <p class="movie-name">{{result.name}} ({{result.year}})</p>
                     <div class="added" [ngClass]="{'show': result.inLibrary && result.animate}">
                         <mat-icon class="check">check</mat-icon>
                     </div>

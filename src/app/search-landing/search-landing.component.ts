@@ -4,7 +4,8 @@ import { OMDBService } from '../OMDB.service';
 interface movieSuggestion {
   name: string,
   img: string,
-  imdbID?: string
+  imdbID: string,
+  year: string
 }
 
 @Component({
@@ -74,7 +75,8 @@ export class SearchLandingComponent implements OnInit {
             {
               name: movie.Title,
               img: img,
-              imdbID: movie.imdbID
+              imdbID: movie.imdbID,
+              year: movie.Year
             }
           )
         }
@@ -103,7 +105,8 @@ export class SearchLandingComponent implements OnInit {
       this.results = [{
         name: data.Title,
         img: data.Poster,
-        imdbID: data.imdbID
+        imdbID: data.imdbID,
+        year: data.Year
       }]
       this.router.navigate(['results']);
       this.OMDB.setResults(this.results);

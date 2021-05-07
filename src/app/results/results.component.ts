@@ -197,7 +197,8 @@ export class ResultsComponent implements OnInit {
               img: img,
               imdbID: movie.imdbID,
               inLibrary: this.library.checkIfMovieInLibrary(movie.imdbID),
-              animate: false
+              animate: false,
+              year: movie.Year
             });
         }
         
@@ -226,7 +227,8 @@ export class ResultsComponent implements OnInit {
         img: data.Poster,
         imdbID: data.imdbID,
         inLibrary: this.library.checkIfMovieInLibrary(data.imdbID),
-        animate: false
+        animate: false,
+        year: data.Year
       }]
     });
   }
@@ -237,7 +239,6 @@ export class ResultsComponent implements OnInit {
     .then(data => {
       this.moreLoading = false;
       console.log(data);
-      
       if(data.Response === 'True'){
         this.page += 1;
         let j = 0;
@@ -254,7 +255,8 @@ export class ResultsComponent implements OnInit {
               img: img,
               imdbID: movie.imdbID,
               inLibrary: this.library.checkIfMovieInLibrary(movie.imdbID),
-              animate: false
+              animate: false,
+              year: movie.Year
             });
             j += 1;
         }
@@ -268,7 +270,8 @@ export class ResultsComponent implements OnInit {
         else 
           this.isThereMoreResults = false;
         this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
-      }
+      }else 
+        this.isThereMoreResults = false
     })
   }
 
