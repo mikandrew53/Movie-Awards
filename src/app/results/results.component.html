@@ -35,6 +35,9 @@
                 </div>
             </div>
         </div>
+        <div *ngIf="!(results.length > 0)" class="noResults">
+            <p>Search for a Movie!</p>
+        </div>
     </div>
     
     <div class="more-info-modal" [ngClass]="{'more-info-modal-active': modalActive}">

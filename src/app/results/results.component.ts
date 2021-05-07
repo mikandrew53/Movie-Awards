@@ -1,8 +1,8 @@
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibraryService } from '../library.service';
 import { OMDPService } from '../OMDP.service';
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 interface movieSuggestion {
   name: string,
@@ -79,7 +79,7 @@ export class ResultsComponent implements OnInit {
   moreLoading = false;
   suggestionsLoading:boolean = false;
   
-  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService) { }
+  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, private snackbar:MatSnackBar) { }
   
   ngOnInit(): void {
     if(!this.OMDB.getSearchTerm()){
@@ -132,7 +132,16 @@ export class ResultsComponent implements OnInit {
         }
       });
 
-      this.library.indexChanged.subscribe(index => this.numMoviesInLibrary = index);
+      this.library.indexChanged.subscribe(index => {
+        this.numMoviesInLibrary = index
+        if (this.numMoviesInLibrary === 5){
+          this.snackbar.open('5 Movies Nominated!', 'Okay', {
+            duration: 4000,
+            verticalPosition: 'bottom',
+          });
+        }
+      }
+        );
     }
   }
 
@@ -186,10 +195,30 @@ export class ResultsComponent implements OnInit {
 
 
   onKeyUp(e?) {
+    console.log(e);
+    
+    if(e && e.key === "Enter"){
+      this.page = 2;
+      this.search.nativeElement.blur()
+      this.inputFocus = false;
+      this.results = [...this.suggestions];
+
+      this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
+      this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
+      if(!this.searchValid)
+        this.noResults = false;
+      return;
+    }
+    if(e && e.keyCode == 32){
+      return;
+    }
+    e ? this.suggestionsLoading = true : this.suggestionsLoading = false;
     let movieToSearch = this.search.nativeElement.value;
-    this.suggestionsLoading = true;
+    // this.suggestionsLoading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
+      console.log(data);
+      
       this.suggestionsLoading = false;
       // console.log(data);
       
@@ -222,17 +251,7 @@ export class ResultsComponent implements OnInit {
         this.suggestions = [] 
         this.searchValid = false;
       }
-      if(e && e.key === "Enter"){
-        this.page = 2;
-        this.search.nativeElement.blur()
-        this.inputFocus = false;
-        this.results = [...this.suggestions];
-
-        this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
-        this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
-        if(!this.searchValid)
-          this.noResults = false;
-      }
+     
     }); 
   }
 
@@ -293,8 +312,9 @@ export class ResultsComponent implements OnInit {
   }
 
   onFocus(){
+    console.log('focus');
     this.inputFocus = true;
-    this.onKeyUp();
+    this.onKeyUp(false);
 
   }
   onFocusOut(){
