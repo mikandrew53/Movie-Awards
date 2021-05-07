@@ -1,49 +1,54 @@
 import { Injectable } from '@angular/core';
-
+import { MovieByIdResponse } from './models/movieByIDResponse.model';
+import { searchResponse } from './models/searchResponse.model';
 @Injectable({
   providedIn: 'root'
 })
-export class OMDPService {
+export class OMDBService {
   private searchData;
   private searchTerm;
   private results;
+  private totalResults: number = 0;
+  private totalResultsFiltered: number = 0;
   private selectedMovie;
   private isThereMoreResults: boolean = false;
-
+  
   constructor() { }
-  async searchMovie (movie:string) {
+  async searchMovie (movie:String) {
     if(movie[movie.length-1] === ' ' || movie[0] === ' ')
       movie = movie.trim();
     
     this.searchTerm = movie
     const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
-        const OMDPResponseData = await OMDPResponse.json();
+        const OMDPResponseData:searchResponse = await OMDPResponse.json();
         return OMDPResponseData;
     }else
         throw `Error: ${OMDPResponse.status} ${OMDPResponse.statusText}`;
+
+    
   }
 
   async getNextPage(page) {
    
    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&apikey=a285c6a9`);
       if(OMDPResponse.ok){
-    const OMDPResponseData = await OMDPResponse.json();
+    const OMDPResponseData:searchResponse = await OMDPResponse.json();
       return OMDPResponseData;
   }else
       throw `Error: ${OMDPResponse.status} ${OMDPResponse.statusText}`;
   }
 
-  async getMovieShortPlot(id:string) {
+  async getMovieShortPlot(id:String) {
     const OMDPResponse = await fetch(`http://www.omdbapi.com/?i=${id}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
-        const OMDPResponseData = await OMDPResponse.json();
+        const OMDPResponseData:MovieByIdResponse = await OMDPResponse.json();
         return OMDPResponseData;
     }else
         throw `Error: ${OMDPResponse.status} ${OMDPResponse.statusText}`;
   }
 
-  async getMovieLongPlot(id:string) {
+  async getMovieLongPlot(id:String) {
     const OMDPResponse = await fetch(`http://www.omdbapi.com/?i=${id}&plot=full&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData = await OMDPResponse.json();
@@ -85,10 +90,24 @@ export class OMDPService {
     this.isThereMoreResults = isThereMoreResults;
   }
 
-  getIsThereMoreResults() {
+  getIsThereMoreResults(): boolean {
     return this.isThereMoreResults;
   }
 
+  setTotalResults (numberOfResults:number) {
+    this.totalResults = numberOfResults;
+  }
+  
+  getTotalResults():number{
+    return this.totalResults;
+  }
 
+  setTotalResultsFiltered (numberOfResultsFiltered:number) {
+    this.totalResultsFiltered = numberOfResultsFiltered;
+  }
+
+  getTotalResultsFiltered(): number {
+    return this.totalResultsFiltered;
+  }
 
 }

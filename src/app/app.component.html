@@ -1,5 +1,5 @@
 <mat-icon (click)="toggle()" class="chosen-movies-toggle" [ngClass]="{'move-nav-label': navActive}">label</mat-icon>
-<div [ngClass]="{'hide': !(libraryUi.length > 0), 'move-num-movies': navActive}"  class="numberOfMovies"><p>{{libraryUi.length}}</p></div>
+<div [ngClass]="{'hide': !(libraryUi.length > 0), 'move-num-movies': navActive}"  class="numberOfMovies" (click)="toggle()"><p>{{libraryUi.length}}</p></div>
 <div class="app-side-bar" [ngClass]="{'nav-active': navActive}">
     <h2>My Nominations</h2>
     <div class="library-item-wrapper" *ngFor="let item of libraryUi; let i = index;" [ngClass]="{'hide': item.hide}">

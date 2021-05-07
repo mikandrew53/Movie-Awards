@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { OMDPService } from '../OMDP.service';
+import { OMDBService } from '../OMDB.service';
 interface movieSuggestion {
   name: string,
   img: string,
@@ -16,12 +16,11 @@ export class SearchLandingComponent implements OnInit {
   searchValid = false;
   @ViewChild('search', {static: true}) search: ElementRef;
   results: Array<movieSuggestion> = [];
-
   suggestions:Array<movieSuggestion> = []
-
   loading:boolean = false;
+  numberOfMoviesFiltered:number = 0;
 
-  constructor(private OMDB: OMDPService, private router: Router){
+  constructor(private OMDB: OMDBService, private router: Router){
   }
 
   ngOnInit(): void {
@@ -30,17 +29,22 @@ export class SearchLandingComponent implements OnInit {
 
 
   onKeyUp(e?) {
-    this.loading = true;
     let movieToSearch = this.search.nativeElement.value;
     if(e && e.key === "Enter"){
       this.onSearch();
-
       return;
     }
+    if(this.search.nativeElement.value.length < 3){
+      this.suggestions = [];
+      return;
+    }
+    this.loading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
+      this.OMDB.setTotalResults(data.totalResults);
       this.loading = false;
       if(data.Response === 'True' ){
+        this.numberOfMoviesFiltered = 0;
         this.suggestions = [];
         this.results = [];
         this.OMDB.setResults(this.results);
@@ -50,19 +54,21 @@ export class SearchLandingComponent implements OnInit {
         let currentSuggestions = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
+          console.log(i);
+          
+          this.numberOfMoviesFiltered += 1;
           let movie = data.Search[i];
-          let img = '';
-          if(movie.Poster === 'N/A' || movie.Type !== "movie")
+          let img = movie.Poster;
+          if(movie.Poster === 'N/A')
+            img = './../../assets/video-camera-5368055_1280.png';
+          if(movie.Type !== "movie")
             continue;
-          img = movie.Poster;
           if(i < 5){
-            currentSuggestions.push(
-              {
+            currentSuggestions.push({
                 name: movie.Title,
                 img: img,
                 imdbID: movie.imdbID
-              }
-            )
+            });
           }
           this.results.push(
             {
@@ -72,6 +78,7 @@ export class SearchLandingComponent implements OnInit {
             }
           )
         }
+        this.OMDB.setTotalResultsFiltered(this.numberOfMoviesFiltered);
         this.OMDB.setIsThereMoreResults(this.results.length > 9 && data.totalResults > 10);
         this.suggestions = currentSuggestions;
         this.OMDB.setResults(this.results);
@@ -92,6 +99,7 @@ export class SearchLandingComponent implements OnInit {
     this.OMDB.setIsThereMoreResults(false);
     this.OMDB.getMovieShortPlot(this.suggestions[i].imdbID)
     .then(data => {
+      this.OMDB.setTotalResults(1);
       this.results = [{
         name: data.Title,
         img: data.Poster,

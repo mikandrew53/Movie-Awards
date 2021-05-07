@@ -41,8 +41,10 @@ export class LibraryService {
     return false;
   }
 
-  checkIfMovieInLibrary(movieId: string){
-    return this.library[movieId];
+  checkIfMovieInLibrary(movieId: string): boolean{
+    if(this.library[movieId])
+      return true;
+    return false;
   }
   
   removeFromLibrary(url:string, removedFromLibrary?:boolean){
@@ -66,8 +68,6 @@ export class LibraryService {
     return this.library;
   }
   getIndex(){
-    console.log(this.index);
-    
     return this.index;
   }
 }

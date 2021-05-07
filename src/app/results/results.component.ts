@@ -1,62 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibraryService } from '../library.service';
-import { OMDPService } from '../OMDP.service';
+import { OMDBService } from '../OMDB.service';
 import { MatSnackBar } from '@angular/material/snack-bar'
-
-interface movieSuggestion {
-  name: string,
-  img: string,
-  imdbID?: string,
-  inLibrary: boolean,
-  animate: boolean
-}
-
-interface responseData {
-  Actors: string,
-  Awards: string
-  BoxOffice: string,
-  Country: string,
-  DVD: string,
-  Director: string,
-  Genre: string,
-  Language: string,
-  Metascore: string,
-  Plot: string,
-  Poster: string,
-  Production: string,
-  Rated: string,
-  Ratings: [],
-  Released: string,
-  Response: string,
-  Runtime: string,
-  Title: string,
-  Type: string,
-  Website: string,
-  Writer: string,
-  Year: string,
-  imdbID: string,
-  imdbRating: string,
-  imdbVotes: string
-}
-
-interface movie{
-  name: string,
-  img: string,
-  imdbID?: string,
-  inLibrary: boolean,
-  actors: string,
-  plot: string,
-  language: string,
-  year: string,
-  rated: string,
-  releaseDate: string,
-  runtime: string,
-  genre: string,
-  director: string,
-  active: boolean,
-  loading: boolean
-}
+import { movieSuggestion } from './../models/movieSuggestion.model';
+import { movieFullInfo } from './../models/movieFullInfo.model'
 
 @Component({
   selector: 'app-results',
@@ -64,6 +12,7 @@ interface movie{
   styleUrls: ['./results.component.scss']
 })
 export class ResultsComponent implements OnInit {
+  
   @ViewChild('search', {static: true}) search: ElementRef;
   suggestions: Array<movieSuggestion> = [];
   searchValid = true;
@@ -73,84 +22,94 @@ export class ResultsComponent implements OnInit {
   isThereMoreResults: boolean = false;
   page = 2;
   modalActive = false;
-  movie:movie;
+  movie:movieFullInfo;
   dialogMovieIndex:number;
   numMoviesInLibrary = 0;
   moreLoading = false;
   suggestionsLoading:boolean = false;
+  numberOfTotalResultsInSuggestions: number = 0;
+  numberOfSuggestionsfiltered:number = 0;
+  numberOfResultsFiltered:number = 0;
+  numberOfTotalResultsInResults: number = 0;
   
-  constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService, private snackbar:MatSnackBar) { }
-  
-  ngOnInit(): void {
-    if(!this.OMDB.getSearchTerm()){
-      this.router.navigate(['']);
-    }else {
-      this.movie = {
-        name: '',
-        img: '',
-        imdbID: '',
-        inLibrary: false,
-        actors: '',
-        plot: '',
-        language: '',
-        year: '',
-        rated: '',
-        releaseDate: '',
-        runtime: '',
-        genre: '',
-        director: '',
-        active: false,
-        loading: false
-      }
-  
-      this.numMoviesInLibrary = this.library.getIndex();
-      
-  
-      this.results = this.OMDB.getResults();
-      if(this.results){
-        for(let i = 0; i < this.results.length; i++){
-          this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
-        }
-      }
-      this.isThereMoreResults = this.OMDB.getIsThereMoreResults();
-      
-      if(this.results.length === 0)
-        this.onKeyUp({key: 'Enter'});
-      this.search.nativeElement.value = this.OMDB.getSearchTerm();
-  
-      this.library.movieRemoved.subscribe(data => {
-        if(data.removedFromLibrary){
-          for(let i = 0; i < this.results.length; i++){
-            if(this.results[i].imdbID === data.imdbID){
-              this.results[i].inLibrary = false;
-              if(this.movie.imdbID === data.imdbID){
-                this.movie.inLibrary = false;
-              }
-              break;
-            }   
-          }
-        }
-      });
+  constructor(private OMDB: OMDBService, private router: Router, private library: LibraryService, private snackbar:MatSnackBar) { }
 
-      this.library.indexChanged.subscribe(index => {
-        this.numMoviesInLibrary = index
-        if (this.numMoviesInLibrary === 5){
-          this.snackbar.open('5 Movies Nominated!', 'Okay', {
-            duration: 4000,
-            verticalPosition: 'bottom',
-          });
+  ngOnInit(): void {
+    this.numMoviesInLibrary = this.library.getIndex();
+    this.results = this.OMDB.getResults();
+    this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
+    console.log(this.numberOfTotalResultsInResults);
+    
+    this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
+    console.log(this.numberOfResultsFiltered);
+    this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+    console.log(this.isThereMoreResults);
+    
+    this.movie = {
+      name: '',
+      img: '',
+      imdbID: '',
+      inLibrary: false,
+      actors: '',
+      plot: '',
+      language: '',
+      year: '',
+      rated: '',
+      releaseDate: '',
+      runtime: '',
+      genre: '',
+      director: '',
+      active: false,
+      loading: false
+    }
+
+
+    if(this.results){
+      for(let i = 0; i < this.results.length; i++)
+        this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
+    }
+    if(this.results.length === 0 || this.results === undefined)
+      this.onKeyUp({key: 'Enter'});
+    this.search.nativeElement.value = this.OMDB.getSearchTerm();
+  
+    this.library.movieRemoved.subscribe(data => {
+      if(data.removedFromLibrary){
+        for(let i = 0; i < this.results.length; i++){
+          if(this.results[i].imdbID === data.imdbID){
+            this.results[i].inLibrary = false;
+            if(this.movie.imdbID === data.imdbID){
+              this.movie.inLibrary = false;
+            }
+            break;
+          }   
         }
       }
-        );
-    }
+    });
+
+    this.library.indexChanged.subscribe(index => {
+      this.numMoviesInLibrary = index
+      if (this.numMoviesInLibrary === 5){
+        this.snackbar.open('5 Movies Nominated!', 'Okay', {
+          duration: 4000,
+          verticalPosition: 'bottom',
+        });
+      }
+    });
+       
+  }
+
+  ngAfterViewInit(): void {
+    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+    //Add 'implements AfterViewInit' to the class.
+    
   }
 
   openDialog(i): void {
     this.movie.loading = true;
     this.dialogMovieIndex = i;
     this.OMDB.getMovieShortPlot(this.results[i].imdbID)
-    .then((data:responseData) => {
-      this.movie.loading =false;
+    .then((data) => {
+      this.movie.loading = false;
       console.log(data);
       if(data.Response === "True"){
         if(data.Actors !== 'N/A')
@@ -195,16 +154,16 @@ export class ResultsComponent implements OnInit {
 
 
   onKeyUp(e?) {
-    console.log(e);
+    // console.log(e);
     
     if(e && e.key === "Enter"){
       this.page = 2;
       this.search.nativeElement.blur()
       this.inputFocus = false;
       this.results = [...this.suggestions];
-
       this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
       this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
+      this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
       if(!this.searchValid)
         this.noResults = false;
       return;
@@ -217,32 +176,29 @@ export class ResultsComponent implements OnInit {
     // this.suggestionsLoading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
-      console.log(data);
-      
+      this.numberOfTotalResultsInSuggestions = data.totalResults;
       this.suggestionsLoading = false;
-      // console.log(data);
-      
-      if(data.Response === 'True' ){
+      if(data.Response === 'True'){
         this.OMDB.setSearchData(data);
         this.searchValid = true;
         let numberOfSuggestions = data.totalResults > 10 ? 10 : data.totalResults;
         let currentSuggestions:Array<movieSuggestion> = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
+          this.numberOfSuggestionsfiltered += 1;
           let movie = data.Search[i];
-          let img = '';
-          img = movie.Poster;
-          if(movie.Poster === 'N/A' || movie.Type !== "movie")
+          let img = movie.Poster;
+          if(movie.Poster === 'N/A')
+            img = './../../assets/video-camera-5368055_1280.png';
+          if(movie.Type !== "movie")
             continue;
-          currentSuggestions.push(
-            {
+          currentSuggestions.push({
               name: movie.Title,
               img: img,
               imdbID: movie.imdbID,
               inLibrary: this.library.checkIfMovieInLibrary(movie.imdbID),
               animate: false
-            }
-          )
+            });
         }
         
         this.suggestions = currentSuggestions;
@@ -250,8 +206,7 @@ export class ResultsComponent implements OnInit {
       }else {
         this.suggestions = [] 
         this.searchValid = false;
-      }
-     
+      } 
     }); 
   }
 
@@ -277,19 +232,22 @@ export class ResultsComponent implements OnInit {
   }
 
   moreClicked() {
-    console.log('clicked');
     this.moreLoading = true;
     this.OMDB.getNextPage(this.page)
     .then(data => {
       this.moreLoading = false;
+      console.log(data);
+      
       if(data.Response === 'True'){
         this.page += 1;
         let j = 0;
         for(let i = 0; i < data.Search.length; i++){
+          this.numberOfResultsFiltered += 1;
           let movie = data.Search[i];
-          let img = '';
-          img = movie.Poster;
+          let img:string = movie.Poster;
           if(movie.Poster === 'N/A')
+            img = './../../assets/video-camera-5368055_1280.png';
+          if(movie.Type !== "movie")
             continue;
           this.results.push({
               name: movie.Title,
@@ -300,9 +258,12 @@ export class ResultsComponent implements OnInit {
             });
             j += 1;
         }
-        // console.log(j);
+        console.log('Total Results Filtered:');
+        console.log(this.numberOfResultsFiltered);
+        console.log(this.numberOfTotalResultsInResults);
         
-        if(j === 10 && (this.results.length < data.totalResults))
+        
+        if(this.numberOfResultsFiltered < this.numberOfTotalResultsInResults)
           this.isThereMoreResults = true;
         else 
           this.isThereMoreResults = false;
@@ -348,19 +309,19 @@ export class ResultsComponent implements OnInit {
         console.log(this.numMoviesInLibrary);  
       }
       // console.log(this.numMoviesInLibrary);
-    }
+  }
 
-    removeFromLibrary(index?:number){
-      if(index === undefined){
-        index = this.dialogMovieIndex;
-        this.movie.inLibrary = false;
-      }
-      this.library.removeFromLibrary(this.results[index].img);  
-      this.results[index].animate = false;
-      this.results[index].inLibrary = false;
-      // this.numMoviesInLibrary -= 1;
-      console.log(this.numMoviesInLibrary);  
+  removeFromLibrary(index?:number){
+    if(index === undefined){
+      index = this.dialogMovieIndex;
+      this.movie.inLibrary = false;
     }
+    this.library.removeFromLibrary(this.results[index].img);  
+    this.results[index].animate = false;
+    this.results[index].inLibrary = false;
+    // this.numMoviesInLibrary -= 1;
+    console.log(this.numMoviesInLibrary);  
+  }
   }
 
 
