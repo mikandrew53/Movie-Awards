@@ -9,7 +9,8 @@ export class LibraryService {
   private library;
   private index:number;
   libChanged = new Subject<{img: string, imdbID: string}>();
-  movieRemoved = new Subject<{imdbID: string, removedFromLibrary:boolean}>()
+  movieRemoved = new Subject<{imdbID: string, removedFromLibrary:boolean}>();
+  indexChanged = new Subject <number>();
 
   constructor() {
     let libraryData = JSON.parse(localStorage.getItem('libraryData'));
@@ -31,6 +32,7 @@ export class LibraryService {
       
       this.index += 1;
       this.library[movieId] = imgUrl;
+      this.indexChanged.next(this.index);
       this.libChanged.next({img: imgUrl, imdbID: movieId});
       localStorage.setItem('libraryData', JSON.stringify(this.library));
       localStorage.setItem('numberOfMoviesInLibrary', JSON.stringify(this.index));
@@ -55,6 +57,7 @@ export class LibraryService {
       }
     }
     this.index -= 1;
+    this.indexChanged.next(this.index);
     localStorage.setItem('libraryData', JSON.stringify(this.library));
     localStorage.setItem('numberOfMoviesInLibrary', JSON.stringify(this.index));
   }

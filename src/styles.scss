@@ -43,7 +43,7 @@ p{
     top: 90px;
     right: -20px;
     transition: transform 150ms ease-in-out;
-    z-index: 13;
+    z-index: 17;
     transform: rotate(180deg);
     &:hover{
         transform: translateX(-10px) rotate(180deg);
@@ -62,7 +62,7 @@ p{
     height: 22px;
     width: 22px;
     border-radius: 50%;
-    z-index: 13;
+    z-index: 17;
     transition: transform 150ms ease-in-out ;
     display: flex;
     justify-content: center;
@@ -106,62 +106,15 @@ p{
     background-color: darken($color: $background-colour, $amount: 3%);
     box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
     // background-color: rgba(0, 0, 0, 0.247);
-    z-index: 14;
+    z-index: 17;
     padding-top: 30px;
     overflow-y: auto;
-    .profile{
-        align-self: center;
-        opacity: 0;
-        will-change: opacity;
-        .profile-img{
-            width: 8rem;
-            border-radius: 5%;
-            margin-bottom: 0.5rem;
-        }
-        h1{
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-bottom: 0.2rem;
-            color: $font-color;
-        }
-        p{
-            margin-bottom: 1rem;
-            font-weight: 400;
-            color: $accent-color;
-        }
-    }
-    .nav-links {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        align-items: center;
-        list-style: none;
-        padding: 1rem 4rem;
-        li{
-            opacity: 0;
-            will-change: opacity;
-            will-change: transform;
-            width: 300px;
-            a{      
-                display: inline-block;
-                padding-top: 2rem;
-                padding-bottom: 2rem;
-                width: 300px;
-                -webkit-tap-highlight-color: transparent;
-                color: $font-color;
-                text-decoration: none; 
-                outline: none;
-                transition: all ease-in-out 250ms;
-                 &:hover{ 
-                    background-color: darken($color: $background-colour, $amount: 10%);
-                }
-                &:active{ background-color: rgba($color: $accent-color, $alpha: 0.5); }
-            }
-            .active{
-                color: $accent-color;
-            }
-        }
-    }
+   h2 {
+       color: #fff;
+       color: $accent-color;
+       font-size: 1.5rem;
+       margin-bottom: 20px;
+   }
 }
 .nav-active { transform: translateX(-600px); }
 
@@ -176,10 +129,13 @@ p{
     transition: opacity .3s;
     background-color: #000;
     // background-color: red;
-    z-index: 12;   
+    z-index: 16;   
     transition: all 200ms ease-in-out; 
     // background-color: $overlay-colour; 
     // border-color: darken($color: $overlay-colour, $amount: 5%);
+}
+.modal-overlay{ 
+    z-index: 11;   
 }
 
 .search-screen{
@@ -324,6 +280,11 @@ p{
     // transform: translateY(-5px);
     color: lighten($color: $background-colour, $amount: 50);
     ul {
+        display: flex;
+        flex-direction: column;
+        .lds-ring{
+            align-self: center;
+        }
         .suggestion {
             display: flex;
             flex-direction: row;
@@ -410,6 +371,10 @@ p{
     column-gap: auto;
     row-gap: 50px;
     padding-bottom: 50px;
+    .lds-ring {
+        justify-self: center;
+        align-self: center;
+    }
     .img-wrapper {
         position: relative;
         transition: all 200ms ease-in-out;
@@ -567,15 +532,17 @@ p{
     box-shadow: 6px 8px 10px 4px rgb(0 0 0 / 20%);
     border-radius: 4px;
     opacity: 0;
-    padding: 58px;
+    padding: 58px 20px 20px 20px;
+    padding: 20px;
     max-width: 700px;
     width: 90vw;
     background-color: $background-colour;
+    
     .back-btn {
         // margin-bottom: 10px;
         position: absolute;
-        top: 15px;
-        right: 15px;
+        top: 20px;
+        right: 22px;
         // z-index: 2;
         // display: none;
         cursor: pointer;
@@ -610,18 +577,26 @@ p{
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        .content-wrapper {
+            display: flex;
+            margin-bottom: 20px;
+            
+            // justify-content: space-between;
+        }
         h3 {
             color: #fff;
             font-size: 1.5rem;
             margin-bottom: 15px;
+            max-width: 80%;
         }
         
-        p {
+        .description {
+            color: darken($color: $background-colour, $amount: 20);
+            min-width: 105px;
+        }
+        .content {
             color: #fff;
-            span {
-                // text-decoration: underline;
-                color: darken($color: $background-colour, $amount: 20);
-            }
+            // text-decoration: underline;
         }
         .add-btn {
             width: 100%;
@@ -633,13 +608,19 @@ p{
             transition: all 200ms ease-in-out;
             border-radius: 4px;
             outline: none;
-            margin-top: 20px;
             &:hover {
                 background-color: darken($color: $accent-color, $amount: 5);
                 box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
                 transform: scale(1.03);
                 cursor: pointer;
 
+            }
+            
+        }
+        .remove-btn {
+            background-color: rgba($color: rgb(150, 4, 4), $alpha: .8);
+            &:hover {
+                background-color: rgba($color: rgb(150, 4, 4), $alpha: 1);
             }
         }
         .btn-disabled {
@@ -660,6 +641,43 @@ p{
     pointer-events:all;
     opacity: 1;
 }
+
+.lds-ring {
+    display: inline-block;
+    position: relative;
+    width: 80px;
+    height: 80px;
+  }
+  .lds-ring div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border: 8px solid #fff;
+    border-radius: 50%;
+    animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    border-color: #fff transparent transparent transparent;
+  }
+  .lds-ring div:nth-child(1) {
+    animation-delay: -0.45s;
+  }
+  .lds-ring div:nth-child(2) {
+    animation-delay: -0.3s;
+  }
+  .lds-ring div:nth-child(3) {
+    animation-delay: -0.15s;
+  }
+  @keyframes lds-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
 
 
 
@@ -760,6 +778,19 @@ p{
             p {
                 font-size: 2rem;
             }
+        }
+    }
+}
+
+@media(max-width: 670px){
+    .info{
+        img {
+            display: none;
+        }
+    }
+    .more-info-modal {
+        .movie-data {
+            width: 100%;
         }
     }
 }

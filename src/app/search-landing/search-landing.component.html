@@ -9,9 +9,10 @@
                 <label for="search" class="label-placeholder" >
                     <span class="placeholder">Search OMDP</span>
                 </label>
-                <div class="suggestions" *ngIf="suggestions.length > 0">
+                <div class="suggestions" *ngIf="suggestions.length > 0 || loading">
                     <ul>
                         <li class="line"></li>
+                        <div class="lds-ring" *ngIf="loading"><div></div><div></div><div></div><div></div></div>
                         <li *ngFor="let suggestion of suggestions; let i=index" class="suggestion" (click)="suggestionClicked(i)">
                             <img *ngIf="suggestion.img" src="{{suggestion.img}}" alt="">
                             <p>{{suggestion.name}}</p> 

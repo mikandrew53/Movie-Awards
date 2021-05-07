@@ -5,9 +5,10 @@
                 <span class="placeholder">Search OMDP</span>
             </label>
             <mat-icon (click)="searchClicked()">search</mat-icon>
-            <div class="suggestions" *ngIf="suggestions.length > 0 && inputFocus">
+            <div class="suggestions" *ngIf="(suggestions.length > 0 && inputFocus) || suggestionsLoading">
                 <ul>
                     <li class="line"></li>
+                    <div class="lds-ring" *ngIf="suggestionsLoading"><div></div><div></div><div></div><div></div></div>
                     <li *ngFor="let suggestion of suggestions; let i=index" class="suggestion" (click)="suggestionClicked(i)" >
                         <img *ngIf="suggestion.img" src="{{suggestion.img}}" alt="">
                         <p>{{suggestion.name}}</p> 
@@ -28,7 +29,8 @@
                         <mat-icon class="check">check</mat-icon>
                     </div>
                 </div>
-                <div class="more" *ngIf="isThereMoreResults" (click)="moreClicked()">
+                <div class="lds-ring" *ngIf="moreLoading"><div></div><div></div><div></div><div></div></div>
+                <div class="more" *ngIf="isThereMoreResults && !moreLoading" (click)="moreClicked()">
                     <p>More</p>
                 </div>
             </div>
@@ -41,22 +43,22 @@
              <img *ngIf="movie.img" src="{{movie.img}}" alt=""> 
              <div class="movie-data">
                  <h3 *ngIf="movie.name !== ''">{{movie.name}}</h3>
-                <div class="movie-data-content">
-    
-                    <p *ngIf="movie.actors !== ''"><span>Actors:</span> {{movie.actors}}</p>
-                    <p *ngIf="movie.director !== ''"><span>Directors:</span> {{movie.director}}</p>
-                    <p *ngIf="movie.genre !== ''"><span>Genre:</span> {{movie.genre}}</p>
-                    <p *ngIf="movie.language !== ''"><span>Language:</span> {{movie.language}}</p>
-                    <p *ngIf="movie.plot !== ''"><span>Plot:</span> {{movie.plot}}</p>
-                    <p *ngIf="movie.rated !== ''"><span>IMDB Rating:</span> {{movie.rated}}</p>
-                    <p *ngIf="movie.releaseDate !== ''"><span>Release Date:</span> {{movie.releaseDate}}</p>
-                    <p *ngIf="movie.runtime !== ''"><span>Runtime:</span> {{movie.runtime}}</p>
-                    <p *ngIf="movie.year !== ''"><span>Year:</span> {{movie.year}}</p>
+                 <div class="movie-data-content">
+                    <div class="lds-ring" *ngIf="movie.loading"><div></div><div></div><div></div><div></div></div>
+                    <div *ngIf="movie.actors !== ''" class="content-wrapper"><p class="description">Actors:</p><p class="content"> {{movie.actors}}</p></div> 
+                    <div *ngIf="movie.director !== ''" class="content-wrapper"><p class="description">Directors:</p><p class="content"> {{movie.director}}</p></div> 
+                    <div *ngIf="movie.genre !== ''" class="content-wrapper"><p class="description">Genre:</p><p class="content"> {{movie.genre}}</p></div> 
+                    <div *ngIf="movie.language !== ''" class="content-wrapper"><p class="description">Language:</p><p class="content"> {{movie.language}}</p></div>
+                    <div *ngIf="movie.plot !== ''" class="content-wrapper"><p class="description">Plot:</p><p class="content"> {{movie.plot}}</p></div> 
+                    <div *ngIf="movie.rated !== ''" class="content-wrapper"><p class="description">IMDB Rating:</p> <p class="content"> {{movie.rated}}</p></div> 
+                    <div *ngIf="movie.releaseDate !== ''" class="content-wrapper"><p class="description">Release Date:</p> <p class="content"> {{movie.releaseDate}}</p></div>
+                    <div *ngIf="movie.runtime !== ''" class="content-wrapper"><p class="description">Runtime:</p><p class="content"> {{movie.runtime}}</p></div>
+                    <div *ngIf="movie.year !== ''" class="content-wrapper"><p class="description">Year:</p><p class="content"> {{movie.year}}</p></div>
                 </div>
                 <button class="add-btn" (click)="addToLibrary()" *ngIf="!movie.inLibrary" [ngClass]="{'btn-disabled': !(numMoviesInLibrary < 5)}">Nominate</button>
-                <button class="add-btn" *ngIf="movie.inLibrary" (click)="removeFromLibrary()">Remove</button>
+                <button class="add-btn remove-btn" *ngIf="movie.inLibrary" (click)="removeFromLibrary()">Remove</button>
             </div>
         </div>
     </div>
-    <div [ngClass]="{'overlay': modalActive}" (click)="closeModal()"></div>
+    <div [ngClass]="{'overlay': modalActive}" class="modal-overlay" (click)="closeModal()"></div>
 

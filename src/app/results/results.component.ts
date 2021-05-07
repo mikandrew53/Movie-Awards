@@ -1,3 +1,4 @@
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { LibraryService } from '../library.service';
@@ -53,7 +54,8 @@ interface movie{
   runtime: string,
   genre: string,
   director: string,
-  active: boolean
+  active: boolean,
+  loading: boolean
 }
 
 @Component({
@@ -74,6 +76,8 @@ export class ResultsComponent implements OnInit {
   movie:movie;
   dialogMovieIndex:number;
   numMoviesInLibrary = 0;
+  moreLoading = false;
+  suggestionsLoading:boolean = false;
   
   constructor(private OMDB: OMDPService, private router: Router, private library: LibraryService) { }
   
@@ -95,7 +99,8 @@ export class ResultsComponent implements OnInit {
         runtime: '',
         genre: '',
         director: '',
-        active: false
+        active: false,
+        loading: false
       }
   
       this.numMoviesInLibrary = this.library.getIndex();
@@ -118,19 +123,25 @@ export class ResultsComponent implements OnInit {
           for(let i = 0; i < this.results.length; i++){
             if(this.results[i].imdbID === data.imdbID){
               this.results[i].inLibrary = false;
-              this.numMoviesInLibrary -= 1;
+              if(this.movie.imdbID === data.imdbID){
+                this.movie.inLibrary = false;
+              }
               break;
             }   
           }
         }
-      })
+      });
+
+      this.library.indexChanged.subscribe(index => this.numMoviesInLibrary = index);
     }
   }
 
   openDialog(i): void {
+    this.movie.loading = true;
     this.dialogMovieIndex = i;
     this.OMDB.getMovieShortPlot(this.results[i].imdbID)
     .then((data:responseData) => {
+      this.movie.loading =false;
       console.log(data);
       if(data.Response === "True"){
         if(data.Actors !== 'N/A')
@@ -176,8 +187,10 @@ export class ResultsComponent implements OnInit {
 
   onKeyUp(e?) {
     let movieToSearch = this.search.nativeElement.value;
+    this.suggestionsLoading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
+      this.suggestionsLoading = false;
       // console.log(data);
       
       if(data.Response === 'True' ){
@@ -246,9 +259,10 @@ export class ResultsComponent implements OnInit {
 
   moreClicked() {
     console.log('clicked');
-    
+    this.moreLoading = true;
     this.OMDB.getNextPage(this.page)
     .then(data => {
+      this.moreLoading = false;
       if(data.Response === 'True'){
         this.page += 1;
         let j = 0;
@@ -299,8 +313,8 @@ export class ResultsComponent implements OnInit {
       this.results[index].inLibrary = this.movie.inLibrary;
       this.results[index].animate = false;
       if(this.results[index].inLibrary){
-        this.numMoviesInLibrary += 1;
-        console.log(this.numMoviesInLibrary);  
+        // this.numMoviesInLibrary += 1;
+        // console.log(this.numMoviesInLibrary);  
         console.log('added');
       }
       return;
@@ -310,7 +324,7 @@ export class ResultsComponent implements OnInit {
       this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
       this.results[index].animate = this.results[index].inLibrary;
       if(this.results[index].inLibrary){
-        this.numMoviesInLibrary += 1;
+        // this.numMoviesInLibrary += 1;
         console.log(this.numMoviesInLibrary);  
       }
       // console.log(this.numMoviesInLibrary);
@@ -324,7 +338,7 @@ export class ResultsComponent implements OnInit {
       this.library.removeFromLibrary(this.results[index].img);  
       this.results[index].animate = false;
       this.results[index].inLibrary = false;
-      this.numMoviesInLibrary -= 1;
+      // this.numMoviesInLibrary -= 1;
       console.log(this.numMoviesInLibrary);  
     }
   }

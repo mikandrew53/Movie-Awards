@@ -19,6 +19,8 @@ export class SearchLandingComponent implements OnInit {
 
   suggestions:Array<movieSuggestion> = []
 
+  loading:boolean = false;
+
   constructor(private OMDB: OMDPService, private router: Router){
   }
 
@@ -28,6 +30,7 @@ export class SearchLandingComponent implements OnInit {
 
 
   onKeyUp(e?) {
+    this.loading = true;
     let movieToSearch = this.search.nativeElement.value;
     if(e && e.key === "Enter"){
       this.onSearch();
@@ -35,8 +38,8 @@ export class SearchLandingComponent implements OnInit {
       return;
     }
     this.OMDB.searchMovie(movieToSearch)
-      
     .then(data => {
+      this.loading = false;
       if(data.Response === 'True' ){
         this.suggestions = [];
         this.results = [];
