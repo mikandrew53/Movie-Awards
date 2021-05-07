@@ -55,8 +55,6 @@ export class SearchLandingComponent implements OnInit {
         let currentSuggestions = []
         
         for(let i = 0; i < numberOfSuggestions; i++){
-          console.log(i);
-          
           this.numberOfMoviesFiltered += 1;
           let movie = data.Search[i];
           let img = movie.Poster;
@@ -68,7 +66,8 @@ export class SearchLandingComponent implements OnInit {
             currentSuggestions.push({
                 name: movie.Title,
                 img: img,
-                imdbID: movie.imdbID
+                imdbID: movie.imdbID,
+                year: movie.Year
             });
           }
           this.results.push(
@@ -118,8 +117,6 @@ export class SearchLandingComponent implements OnInit {
   onSearch(){
     this.OMDB.setSearchTerm(this.search.nativeElement.value)
     if(this.search.nativeElement.value){
-      console.log(this.results);
-      
       this.router.navigate(['results']);
       this.OMDB.setResults(this.results);
     }

@@ -38,13 +38,16 @@ export class ResultsComponent implements OnInit {
     this.numMoviesInLibrary = this.library.getIndex();
     this.results = this.OMDB.getResults();
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
-    console.log(this.numberOfTotalResultsInResults);
-    
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
-    console.log(this.numberOfResultsFiltered);
     this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
-    console.log(this.isThereMoreResults);
-    
+    this.search.nativeElement.value = this.OMDB.getSearchTerm();
+    if(!(this.search.nativeElement.value.length < 3 && this.results.length === 0)){
+      this.moreLoading = true;
+      this.searchMovies({key: "Enter"});
+    }
+
+
+
     this.movie = {
       name: '',
       img: '',
@@ -62,14 +65,12 @@ export class ResultsComponent implements OnInit {
       active: false,
       loading: false
     }
-
-
     if(this.results){
       for(let i = 0; i < this.results.length; i++)
         this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
     }
-    if(this.results.length === 0 || this.results === undefined)
-      this.onKeyUp({key: 'Enter'});
+    // if(this.results.length === 0 || this.results === undefined)
+    //   this.onKeyUp({key: 'Enter'});
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
   
     this.library.movieRemoved.subscribe(data => {
@@ -97,13 +98,6 @@ export class ResultsComponent implements OnInit {
     });
        
   }
-
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
-    
-  }
-
   openDialog(i): void {
     this.movie.loading = true;
     this.dialogMovieIndex = i;
@@ -152,32 +146,34 @@ export class ResultsComponent implements OnInit {
     document.body.style.overflowY = 'auto';
   }
 
-
   onKeyUp(e?) {
-    // console.log(e);
-    
     if(e && e.key === "Enter"){
       this.page = 2;
       this.search.nativeElement.blur()
       this.inputFocus = false;
       this.results = [...this.suggestions];
-      this.isThereMoreResults = this.results.length > 9 && this.OMDB.getSearchData().totalResults > 10;
-      this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
       this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
-      if(!this.searchValid)
-        this.noResults = false;
-      return;
+      this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+      if(this.search.nativeElement.value.length < 3 && this.results.length === 0){
+        this.isThereMoreResults = false;
+        return;
+      }
     }
     if(e && e.keyCode == 32){
       return;
     }
-    e ? this.suggestionsLoading = true : this.suggestionsLoading = false;
+    this.suggestionsLoading = true;
+    this.searchMovies(e);
+  }
+  
+  searchMovies(e?) {
     let movieToSearch = this.search.nativeElement.value;
-    // this.suggestionsLoading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
       this.numberOfTotalResultsInSuggestions = data.totalResults;
       this.suggestionsLoading = false;
+      this.moreLoading = false;
+      this.numberOfSuggestionsfiltered = 0;
       if(data.Response === 'True'){
         this.OMDB.setSearchData(data);
         this.searchValid = true;
@@ -203,10 +199,17 @@ export class ResultsComponent implements OnInit {
         }
         
         this.suggestions = currentSuggestions;
+        if(e && e.key === "Enter"){
+          this.results = [...this.suggestions];
+          this.numberOfTotalResultsInResults = data.totalResults;
+          this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
+          this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+        }
         
       }else {
         this.suggestions = [] 
         this.searchValid = false;
+        this.isThereMoreResults = false;
       } 
     }); 
   }

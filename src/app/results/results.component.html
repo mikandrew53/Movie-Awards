@@ -11,7 +11,7 @@
                     <div class="lds-ring" *ngIf="suggestionsLoading"><div></div><div></div><div></div><div></div></div>
                     <li *ngFor="let suggestion of suggestions; let i=index" class="suggestion" (click)="suggestionClicked(i)" >
                         <img *ngIf="suggestion.img" src="{{suggestion.img}}" alt="">
-                        <p>{{suggestion.name}}</p> 
+                        <p>{{suggestion.name}} ({{suggestion.year}})</p> 
                     </li>
                 </ul>
             </div>

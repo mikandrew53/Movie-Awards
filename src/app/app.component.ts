@@ -26,8 +26,6 @@ export class AppComponent {
   
 
   ngOnInit(): void {
-    console.log(this.library.getIndex());
-    
     if(this.library.getIndex() != 0){
       for(let movieId in this.library.getLibrary()){
         this.libraryUi.push( {
@@ -49,8 +47,6 @@ export class AppComponent {
 
       this.library.movieRemoved.subscribe(data => {
         if(!data.removedFromLibrary){
-          console.log('Removed From Library');
-          
           for(let i = 0; i < this.libraryUi.length; i++){
             if(this.libraryUi[i].imdbID === data.imdbID){
                 this.libraryUi.splice(i, 1);
@@ -71,7 +67,6 @@ export class AppComponent {
 
 
   removeFromLibrary(i){
-    console.log(this.libraryUi);
     this.libraryUi[i].hide = true;
     this.library.removeFromLibrary(this.libraryUi[i].img, true);
     setTimeout(() => this.libraryUi.splice(i, 1), 400);
