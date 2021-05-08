@@ -52,12 +52,16 @@ export class SearchLandingComponent implements OnInit {
         this.OMDB.setSearchData(data);
         this.searchValid = true;
         let numberOfSuggestions = data.Search.length;
-        let currentSuggestions = []
+        let currentSuggestions = [];
+        const ids = {}
         
         for(let i = 0; i < numberOfSuggestions; i++){
+          
           this.numberOfMoviesFiltered += 1;
           let movie = data.Search[i];
           let img = movie.Poster;
+          if(ids[movie.imdbID])
+            continue;
           if(movie.Poster === 'N/A')
             img = './../../assets/video-camera-5368055_1280.png';
           if(movie.Type !== "movie")
@@ -78,6 +82,7 @@ export class SearchLandingComponent implements OnInit {
               year: movie.Year
             }
           )
+          ids[movie.imdbID] = true;
         }
         this.OMDB.setTotalResultsFiltered(this.numberOfMoviesFiltered);
         this.OMDB.setIsThereMoreResults(this.results.length > 9 && data.totalResults > 10);

@@ -21,6 +21,7 @@ id="numberOfMovies">
     <div class="library-item-wrapper" *ngFor="let item of libraryUi; let i = index;" [ngClass]="{'hide': item.hide}">
         <mat-icon class="remove-btn" (click)="removeFromLibrary(i)">remove</mat-icon>
         <img src="{{item.img}}" alt="" >
+        <p class="movie-name">{{item.name}} ({{item.year}})</p>
     </div>
 </div>
 <div class="overlay" (click)="toggle()" [ngClass]="{'opacity': navActive}" *ngIf="navActive"></div>

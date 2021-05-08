@@ -1,73 +1,76 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 
+interface libraryItem {
+  imdbId: string,
+  img: string,
+  name: string,
+  year: string
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class LibraryService {
-  private library;
-  private index:number;
-  libChanged = new Subject<{img: string, imdbID: string}>();
+  private library: Array<libraryItem>;
+  private libraryIds = {};
+  libChanged = new Subject<{img: string, imdbID: string, name: string, year: string}>();
   movieRemoved = new Subject<{imdbID: string, removedFromLibrary:boolean}>();
   indexChanged = new Subject <number>();
 
   constructor() {
     let libraryData = JSON.parse(localStorage.getItem('libraryData'));
-    let index = JSON.parse(localStorage.getItem('numberOfMoviesInLibrary'));
-    if(libraryData && index){
+    if(libraryData){
       this.library = libraryData;
-      this.index = index;
+      for(let i = 0; i < this.library.length; i++)
+        this.libraryIds[this.library[i].imdbId] = true;
     }else {
-      this.index = 0;
-      this.library = {};
+      this.library = [];
     }
     // console.log(this.index);
     
   }
 
-  addToLibrary (movieId: string, imgUrl:string){
-    if(this.index < 5 && !this.library[movieId]){
-      console.log('yo');
-      
-      this.index += 1;
-      this.library[movieId] = imgUrl;
-      this.indexChanged.next(this.index);
-      this.libChanged.next({img: imgUrl, imdbID: movieId});
+  addToLibrary (movieId: string, imgUrl:string, name: string, year: string){
+    if(this.library.length < 5 && !this.libraryIds[movieId]){
+      this.library.push({
+        imdbId: movieId,
+        img: imgUrl,
+        name: name,
+        year: year
+      });
+      this.indexChanged.next(this.library.length);
+      this.libChanged.next({img: imgUrl, imdbID: movieId, name: name, year: year});
       localStorage.setItem('libraryData', JSON.stringify(this.library));
-      localStorage.setItem('numberOfMoviesInLibrary', JSON.stringify(this.index));
+      this.libraryIds[movieId] = true;
       return true;
     }
     return false;
   }
 
   checkIfMovieInLibrary(movieId: string): boolean{
-    if(this.library[movieId])
+    if(this.libraryIds[movieId])
       return true;
     return false;
   }
   
-  removeFromLibrary(url:string, removedFromLibrary?:boolean){
+  removeFromLibrary(imdbID:string, removedFromLibrary?:boolean){
     if(removedFromLibrary === undefined)
       removedFromLibrary = false;
-    for(let movieId in this.library){
-      console.log(movieId);
-      if(this.library[movieId] == url){
-        this.movieRemoved.next({imdbID: movieId, removedFromLibrary: removedFromLibrary});
-        delete this.library[movieId];
+    for(let i = 0; i < this.library.length; i++){
+      if(this.library[i].imdbId === imdbID){
+        this.movieRemoved.next({imdbID: imdbID, removedFromLibrary: removedFromLibrary});
+        delete this.libraryIds[imdbID];
+        this.library.splice(i, 1);
         break;
       }
     }
-    this.index -= 1;
-    this.indexChanged.next(this.index);
+    this.indexChanged.next(this.library.length);
     localStorage.setItem('libraryData', JSON.stringify(this.library));
-    localStorage.setItem('numberOfMoviesInLibrary', JSON.stringify(this.index));
+    
   }
 
   getLibrary(){
     return this.library;
-  }
-  getIndex(){
-    return this.index;
   }
 }

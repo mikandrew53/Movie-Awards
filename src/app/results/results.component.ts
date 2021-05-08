@@ -31,11 +31,12 @@ export class ResultsComponent implements OnInit {
   numberOfSuggestionsfiltered:number = 0;
   numberOfResultsFiltered:number = 0;
   numberOfTotalResultsInResults: number = 0;
+  resultIds = {};
   
   constructor(private OMDB: OMDBService, private router: Router, private library: LibraryService, private snackbar:MatSnackBar) { }
 
   ngOnInit(): void {
-    this.numMoviesInLibrary = this.library.getIndex();
+    this.numMoviesInLibrary = this.library.getLibrary().length;
     this.results = this.OMDB.getResults();
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
@@ -65,14 +66,14 @@ export class ResultsComponent implements OnInit {
       active: false,
       loading: false
     }
+
     if(this.results){
       for(let i = 0; i < this.results.length; i++)
         this.results[i].inLibrary = this.library.checkIfMovieInLibrary(this.results[i].imdbID);
     }
-    // if(this.results.length === 0 || this.results === undefined)
-    //   this.onKeyUp({key: 'Enter'});
+
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
-  
+
     this.library.movieRemoved.subscribe(data => {
       if(data.removedFromLibrary){
         for(let i = 0; i < this.results.length; i++){
@@ -104,7 +105,6 @@ export class ResultsComponent implements OnInit {
     this.OMDB.getMovieShortPlot(this.results[i].imdbID)
     .then((data) => {
       this.movie.loading = false;
-      console.log(data);
       if(data.Response === "True"){
         if(data.Actors !== 'N/A')
           this.movie['actors'] = data.Actors;
@@ -138,6 +138,7 @@ export class ResultsComponent implements OnInit {
     if(window.innerHeight === 500 || window.innerWidth === 670)
       document.getElementById('results').style.position = 'fixed';
   }
+
   closeModal(): void {
     this.modalActive = false;
     setTimeout(() => {
@@ -177,6 +178,7 @@ export class ResultsComponent implements OnInit {
       this.moreLoading = false;
       this.numberOfSuggestionsfiltered = 0;
       if(data.Response === 'True'){
+        const ids = {};
         this.OMDB.setSearchData(data);
         this.searchValid = true;
         let numberOfSuggestions = data.totalResults > 10 ? 10 : data.totalResults;
@@ -188,7 +190,7 @@ export class ResultsComponent implements OnInit {
           let img = movie.Poster;
           if(movie.Poster === 'N/A')
             img = './../../assets/video-camera-5368055_1280.png';
-          if(movie.Type !== "movie")
+          if(movie.Type !== "movie" || ids[movie.imdbID])
             continue;
           currentSuggestions.push({
               name: movie.Title,
@@ -198,11 +200,13 @@ export class ResultsComponent implements OnInit {
               animate: false,
               year: movie.Year
             });
+            ids[movie.imdbID] = true;
         }
         
         this.suggestions = currentSuggestions;
         if(e && e.key === "Enter"){
           this.results = [...this.suggestions];
+          this.resultIds = {...ids};
           this.numberOfTotalResultsInResults = data.totalResults;
           this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
           this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
@@ -211,7 +215,6 @@ export class ResultsComponent implements OnInit {
       }else {
         this.suggestions = [] 
         this.searchValid = false;
-        this.isThereMoreResults = false;
       } 
     }); 
   }
@@ -248,10 +251,15 @@ export class ResultsComponent implements OnInit {
           this.numberOfResultsFiltered += 1;
           let movie = data.Search[i];
           let img:string = movie.Poster;
+          if(this.resultIds[movie.imdbID])
+            continue;
           if(movie.Poster === 'N/A')
             img = './../../assets/video-camera-5368055_1280.png';
           if(movie.Type !== "movie")
             continue;
+
+          this.resultIds[movie.imdbID] = true;
+
           this.results.push({
               name: movie.Title,
               img: img,
@@ -288,13 +296,12 @@ export class ResultsComponent implements OnInit {
   addToLibrary(index?){
     if(index === undefined){
       index = this.dialogMovieIndex;
-      this.movie.inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
+      this.movie.inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img, this.results[index].name, this.results[index].year);
       this.results[index].inLibrary = this.movie.inLibrary;
       this.results[index].animate = false;
     }else {
-      this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
+      this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img, this.results[index].name, this.results[index].year);
       this.results[index].animate = this.results[index].inLibrary;
-      console.log(this.results[index]);
     }
     
     
@@ -305,7 +312,7 @@ export class ResultsComponent implements OnInit {
       index = this.dialogMovieIndex;
       this.movie.inLibrary = false;
     }
-    this.library.removeFromLibrary(this.results[index].img);  
+    this.library.removeFromLibrary(this.results[index].imdbID);  
     this.results[index].animate = false;
     this.results[index].inLibrary = false;    
   }

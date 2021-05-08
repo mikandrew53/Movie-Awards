@@ -3,7 +3,9 @@ import { LibraryService } from './library.service';
 interface libraryItem {
   img: string,
   hide: boolean,
-  imdbID: string
+  imdbID: string,
+  name: string,
+  year: string
 }
 
 @Component({
@@ -27,12 +29,14 @@ export class AppComponent {
   
 
   ngOnInit(): void {
-    if(this.library.getIndex() != 0){
-      for(let movieId in this.library.getLibrary()){
+    if(this.library.getLibrary().length !== 0){
+      for(let i = 0; i < this.library.getLibrary().length; i++){
         this.libraryUi.push( {
-          img: this.library.getLibrary()[movieId],
+          img: this.library.getLibrary()[i].img,
           hide: false,
-          imdbID: movieId
+          imdbID: this.library.getLibrary()[i].imdbId,
+          name: this.library.getLibrary()[i].name,
+          year: this.library.getLibrary()[i].year
         });
       }
     }
@@ -41,7 +45,9 @@ export class AppComponent {
       this.libraryUi.push({
         img: movie.img,
         hide: false,
-        imdbID: movie.imdbID
+        imdbID: movie.imdbID,
+        name: movie.name,
+        year: movie.year
       });
     });
 
@@ -59,7 +65,7 @@ export class AppComponent {
 
   removeFromLibrary(i){
     this.libraryUi[i].hide = true;
-    this.library.removeFromLibrary(this.libraryUi[i].img, true);
+    this.library.removeFromLibrary(this.libraryUi[i].imdbID, true);
     setTimeout(() => this.libraryUi.splice(i, 1), 400);
     ;
   }
