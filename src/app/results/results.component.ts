@@ -134,6 +134,10 @@ export class ResultsComponent implements OnInit {
     this.modalActive = true;
     this.movie.inLibrary = this.library.checkIfMovieInLibrary(this.movie.imdbID);
     document.body.style.overflowY = 'hidden';
+    document.getElementById('results').style.overflowY = 'hidden';
+    document.getElementById('results').style.position = 'fixed';
+    // this.resultsUI.nativeElement.style.overflowY = 'hidden';
+    // document.body.style.touchAction = 'none';
 
 
   }
@@ -144,6 +148,10 @@ export class ResultsComponent implements OnInit {
       this.movie.active = false;
     }, 250);
     document.body.style.overflowY = 'auto';
+    document.getElementById('results').style.overflowY = 'auto';
+    document.getElementById('results').style.position = 'relative';
+    // this.resultsUI.nativeElement.style.overflowY = 'auto';
+    
   }
 
   onKeyUp(e?) {

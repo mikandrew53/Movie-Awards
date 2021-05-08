@@ -816,16 +816,40 @@ p{
     }
 }
 
-@media(max-width: 670px){
+@media(max-width: 670px ), (max-height: 500px){
     .info{
         img {
             display: none;
         }
     }
+    // .more-info-modal {
+    //     .movie-data {
+    //         width: 100%;
+    //     }
+    // }
+
     .more-info-modal {
+        height: 100vh;
+        width: 100vw;
+        overflow-y: scroll;
+        padding: 80px 45px;
+        max-width: 100vw;
         .movie-data {
             width: 100%;
         }
+        .back-btn{
+            top: 80px;
+            right: 44px;
+        }
+    }
+}
+
+@media(max-height: 500px){
+    .search-wrapper {
+        margin-top: 0;
+    }
+    .search-screen {
+        align-items: center;
     }
 }
 
