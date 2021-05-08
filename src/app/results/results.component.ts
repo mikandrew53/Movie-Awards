@@ -220,13 +220,11 @@ export class ResultsComponent implements OnInit {
     this.search.nativeElement.value = this.suggestions[i].name;
     this.inputFocus = false;
     this.OMDB.setSearchTerm(this.suggestions[i].name);
-    // console.log(this.suggestions[i].imdbID);
     this.isThereMoreResults = false;
     this.OMDB.setIsThereMoreResults(this.isThereMoreResults);
 
     this.OMDB.getMovieShortPlot(this.suggestions[i].imdbID)
     .then(data => {
-      // console.log(data);
       this.results = [{
         name: data.Title,
         img: data.Poster,
@@ -243,7 +241,6 @@ export class ResultsComponent implements OnInit {
     this.OMDB.getNextPage(this.page)
     .then(data => {
       this.moreLoading = false;
-      console.log(data);
       if(data.Response === 'True'){
         this.page += 1;
         let j = 0;
@@ -265,11 +262,6 @@ export class ResultsComponent implements OnInit {
             });
             j += 1;
         }
-        console.log('Total Results Filtered:');
-        console.log(this.numberOfResultsFiltered);
-        console.log(this.numberOfTotalResultsInResults);
-        
-        
         if(this.numberOfResultsFiltered < this.numberOfTotalResultsInResults)
           this.isThereMoreResults = true;
         else 
@@ -281,10 +273,8 @@ export class ResultsComponent implements OnInit {
   }
 
   onFocus(){
-    console.log('focus');
     this.inputFocus = true;
     this.onKeyUp(false);
-
   }
   onFocusOut(){
     if(this.search.nativeElement !== document.activeElement)
@@ -301,22 +291,13 @@ export class ResultsComponent implements OnInit {
       this.movie.inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
       this.results[index].inLibrary = this.movie.inLibrary;
       this.results[index].animate = false;
-      if(this.results[index].inLibrary){
-        // this.numMoviesInLibrary += 1;
-        // console.log(this.numMoviesInLibrary);  
-        console.log('added');
-      }
-      return;
-    }
-    
-    this.results[index].inLibrary = false;
+    }else {
       this.results[index].inLibrary = this.library.addToLibrary(this.results[index].imdbID, this.results[index].img);
       this.results[index].animate = this.results[index].inLibrary;
-      if(this.results[index].inLibrary){
-        // this.numMoviesInLibrary += 1;
-        console.log(this.numMoviesInLibrary);  
-      }
-      // console.log(this.numMoviesInLibrary);
+      console.log(this.results[index]);
+    }
+    
+    
   }
 
   removeFromLibrary(index?:number){
@@ -326,11 +307,9 @@ export class ResultsComponent implements OnInit {
     }
     this.library.removeFromLibrary(this.results[index].img);  
     this.results[index].animate = false;
-    this.results[index].inLibrary = false;
-    // this.numMoviesInLibrary -= 1;
-    console.log(this.numMoviesInLibrary);  
+    this.results[index].inLibrary = false;    
   }
-  }
+}
 
 
 

@@ -1,5 +1,21 @@
-<mat-icon (click)="toggle()" class="chosen-movies-toggle" [ngClass]="{'move-nav-label': navActive}">label</mat-icon>
-<div [ngClass]="{'hide': !(libraryUi.length > 0), 'move-num-movies': navActive}"  class="numberOfMovies" (click)="toggle()"><p>{{libraryUi.length}}</p></div>
+<mat-icon 
+(click)="toggle()" 
+(mouseenter)="onHover()" 
+(mouseleave)="onMouseLeave()"
+class="chosen-movies-toggle" 
+[ngClass]="{'move-nav-label': navActive}"
+id="label">
+label
+</mat-icon>
+<div 
+(click)="toggle()"
+(mouseleave)="onMouseLeave()"
+(mouseenter)="onHover()"
+[ngClass]="{'hide': !(libraryUi.length > 0), 'move-num-movies': navActive}"
+class="numberOfMovies"
+id="numberOfMovies">
+    <p>{{libraryUi.length}}</p>
+</div>
 <div class="app-side-bar" [ngClass]="{'nav-active': navActive}">
     <h2>My Nominations</h2>
     <div class="library-item-wrapper" *ngFor="let item of libraryUi; let i = index;" [ngClass]="{'hide': item.hide}">
@@ -7,6 +23,6 @@
         <img src="{{item.img}}" alt="" >
     </div>
 </div>
-<div class="overlay" (click)="overlayClick()" [ngClass]="{'opacity': navActive}" *ngIf="navActive"></div>
+<div class="overlay" (click)="toggle()" [ngClass]="{'opacity': navActive}" *ngIf="navActive"></div>
 
 <router-outlet></router-outlet>

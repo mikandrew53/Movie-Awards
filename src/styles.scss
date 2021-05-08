@@ -45,12 +45,12 @@ p{
     transition: transform 150ms ease-in-out;
     z-index: 17;
     transform: rotate(180deg);
+    cursor: pointer;
     &:hover{
-        transform: translateX(-10px) rotate(180deg);
-        cursor: pointer;
+        // transform: translateX(-10px) rotate(180deg);
     }
     &:hover + .numberOfMovies {
-        transform: translateX(-10px);
+        // transform: translateX(-10px);
     }
 }
 
@@ -68,22 +68,23 @@ p{
     justify-content: center;
     align-items: center;
     color: #fff;
+    cursor: pointer;
     &:hover{
-        cursor: pointer;
+        // transform: translateX(-10px);
     }
 }
 .move-num-movies{
-    transform: translateX(-310px)!important ;
+    // transform: translateX(-310px)!important ;
     &:hover{
-        transform: translateX(-310px);
+        // transform: translateX(-310px);
         cursor: pointer;
     }
 }
 
 .move-nav-label{
-    transform: translateX(-310px) rotate(180deg);
+    // transform: translateX(-310px) rotate(180deg);
     &:hover{
-        transform: translateX(-310px) rotate(180deg);
+        // transform: translateX(-310px) rotate(180deg);
         cursor: pointer;
     }
 }
@@ -357,6 +358,7 @@ p{
 
 .results-grid-wrapper {
     // width: 90%;
+    padding-top: 20px;
     display: flex;
     justify-content: center;
 }
@@ -426,6 +428,9 @@ p{
             border-radius: 50%;
             background-color: rgba($color: $accent-color, $alpha: .8);
             transition: all 200ms ease-in-out;
+            height: 30px;
+            width: 30px;
+            font-size: 30px;
             &:hover{
                 background-color: rgba($color: $accent-color, $alpha: 1);
                 transform: scale(1.1);
