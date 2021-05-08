@@ -135,14 +135,10 @@ export class ResultsComponent implements OnInit {
     this.movie.inLibrary = this.library.checkIfMovieInLibrary(this.movie.imdbID);
     document.body.style.overflowY = 'hidden';
     document.getElementById('results').style.overflowY = 'hidden';
-    document.getElementById('results').style.position = 'fixed';
-    // this.resultsUI.nativeElement.style.overflowY = 'hidden';
-    // document.body.style.touchAction = 'none';
-
-
+    if(window.innerHeight === 500 || window.innerWidth === 670)
+      document.getElementById('results').style.position = 'fixed';
   }
   closeModal(): void {
-    // this.dialog.open(MoreInfoComponent, {data: {movie: this.results[i]}});
     this.modalActive = false;
     setTimeout(() => {
       this.movie.active = false;
@@ -150,8 +146,6 @@ export class ResultsComponent implements OnInit {
     document.body.style.overflowY = 'auto';
     document.getElementById('results').style.overflowY = 'auto';
     document.getElementById('results').style.position = 'relative';
-    // this.resultsUI.nativeElement.style.overflowY = 'auto';
-    
   }
 
   onKeyUp(e?) {
