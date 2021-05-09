@@ -19,7 +19,7 @@ export class OMDBService {
       movie = movie.trim();
     
     this.searchTerm = movie
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&apikey=a285c6a9`);
+    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&type=movie&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData:searchResponse = await OMDPResponse.json();
         return OMDPResponseData;
@@ -31,7 +31,7 @@ export class OMDBService {
 
   async getNextPage(page) {
    
-   const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&apikey=a285c6a9`);
+   const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&type=movie&apikey=a285c6a9`);
       if(OMDPResponse.ok){
     const OMDPResponseData:searchResponse = await OMDPResponse.json();
       return OMDPResponseData;
