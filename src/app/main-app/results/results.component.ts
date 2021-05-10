@@ -41,6 +41,8 @@ export class ResultsComponent implements OnInit {
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
     this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+    if(this.results.length === 0)
+      this.isThereMoreResults = false;
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
     if(!(this.search.nativeElement.value.length < 3 && this.results.length === 0)){
       this.moreLoading = true;
@@ -174,6 +176,8 @@ export class ResultsComponent implements OnInit {
       this.results = [...this.suggestions];
       this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
       this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+      if(this.results.length === 0)
+        this.isThereMoreResults = false;
       if(this.search.nativeElement.value.length < 3 && this.results.length === 0){
         this.isThereMoreResults = false;
         return;
@@ -227,6 +231,8 @@ export class ResultsComponent implements OnInit {
           this.numberOfTotalResultsInResults = data.totalResults;
           this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
           this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
+          if(this.results.length === 0)
+            this.isThereMoreResults = false
         }
         
       }else {
