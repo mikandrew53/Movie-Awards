@@ -34,6 +34,22 @@ p{
     margin: 0;
 }
 
+.github-link {
+    color: #fff;
+    cursor: pointer;
+    position: absolute;
+    right: 47px;
+    top: 18px;
+    // transform: scale(2);
+    transition: transform 150ms ease-in-out;
+    .icon {
+        font-size: 40px;
+    }
+    &:hover {
+        transform: scale(1.1);
+    }
+}
+
 .my-library-title {
     color: $accent-color;
     font-size: 2rem;
@@ -70,7 +86,7 @@ p{
     height: 35vh;
     max-height: 200px;
 }
-.link {
+.link-btn-wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,15 +97,18 @@ p{
         border-radius: 4px;
         padding: 0 10px;
         height: 100%;
-        box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
         display: flex;
+        box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
         align-items: center;
-        color: #fff;
         background-color: $background-colour;
-        outline: none;
-        border: none;
-        overflow-y: scroll;
         // pointer-events: none;
+        .link {
+            outline: none;
+            border: none;
+            color: #fff;
+            overflow-y: scroll;
+            background-color: $background-colour;
+        }
     }
     .btn {
         height: 100%;
@@ -393,7 +412,7 @@ p{
     justify-content: center;
     width: 100%;
     .form-group{
-        width: 95%;
+        width: 70%;
         // margin-top: 5px;
         // position: relative;
         position: fixed;

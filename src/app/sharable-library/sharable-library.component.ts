@@ -15,7 +15,6 @@ interface libraryItem {
 }
 
 
-
 @Component({
   selector: 'app-sharable-library',
   templateUrl: './sharable-library.component.html',
@@ -26,8 +25,10 @@ export class SharableLibraryComponent implements OnInit {
   movie:movieFullInfo;
   modalActive = false;
   dialogMovieIndex:number;
+  // url = 'https://shoppies-5b855.firebaseapp.com/';
+  // websitename = 'https://shoppies-5b855.firebaseapp.com/library?';
   url = 'http://192.168.2.73:4200';
-  websitename = 'http://192.168.2.73:4200';
+  websitename = 'http://192.168.2.73:4200/library?';
   moviesInUrl: Array<string> = []
   @ViewChild('urlUi', {static: true}) urlUI: ElementRef;
 
@@ -39,65 +40,42 @@ export class SharableLibraryComponent implements OnInit {
     private route:ActivatedRoute, 
     private location: Location) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     let movies = this.route.snapshot.queryParams; 
     if(Object.keys(movies).length === 0){
-      console.log('here');
-    
-      this.initFromCurrentLibrary();
-      let libraryIds = [];
-      for(let i = 0; i < this.library.getLibrary().length; i++)
-        libraryIds.push(this.library.getLibrary()[i].imdbId);
-      this.router.navigate(['library'], {queryParams: {movie: libraryIds}});
-      
-      let tempUrl = `/library?`;
-      console.log(this.moviesInUrl);
-      
+      for(let i = 0; i < this.library.getLibrary().length; i++){
+        this.myLibrary.push({
+          img: this.library.getLibrary()[i].img,
+          hide: false,
+          imdbID: this.library.getLibrary()[i].imdbId,
+          name: this.library.getLibrary()[i].name,
+          year: this.library.getLibrary()[i].year, 
+          inLibrary: true
+        });
+        this.moviesInUrl.push(this.library.getLibrary()[i].imdbId);
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {movie: this.moviesInUrl},
+        });
+      }
+      if(this.moviesInUrl.length === 0)
+        this.router.navigate(['']);
+      let tempUrl = this.websitename;
       for(let i = 0; i < this.moviesInUrl.length; i++)
         tempUrl += `movie=${this.moviesInUrl[i]}&`;
-      this.url = this.websitename + tempUrl;
-      
-      
-    }
-    else {
+      this.url = tempUrl;
+    }else {
       console.log(movies);
-      
-      if(Array.isArray(movies.movie))
-        this.moviesInUrl = movies.movie;
-      else 
-        this.moviesInUrl = [movies.movie];
-      let libraryMatches = ((this.library.getLibrary().length === movies.movie.length));
-      
-      
-      
-      if(!libraryMatches){
-        this.library.setLibrary([]);
-        this.library.resetLibraryIds();
-        this.getMovies(this.moviesInUrl)
-      }else {
-        if(libraryMatches){
-          for(let i = 0; i < this.moviesInUrl.length; i++){
-            if(!this.library.checkIfMovieInLibrary(this.moviesInUrl[i])){
-              libraryMatches = false;
-              break;
-            }
-          }
-        }
-        if(!libraryMatches){
-          this.library.setLibrary([]);
-          this.library.resetLibraryIds();
-          this.getMovies(this.moviesInUrl)
-        }else {
-          this.initFromCurrentLibrary();
-          this.url += this.router.url;
-        }
-
+      if(!Array.isArray(movies.movie)){
+        movies = {movie: [movies.movie]} 
+        console.log(movies);
+      }
+      this.library.setLibrary([]);
+      this.library.resetLibraryIds();
+      this.url += '/library?';
+      for(let i = 0; i < Object.keys(movies.movie).length; i++)
+          this.getMovies(movies.movie[i]);
     }
-
-    }
-
-    
-    
     this.movie = {
       name: '',
       img: '',
@@ -115,31 +93,10 @@ export class SharableLibraryComponent implements OnInit {
       active: false,
       loading: false
     }
-    
-    if(this.moviesInUrl.length === 0){
-      this.router.navigate(['']);
-    }
-  }
 
-  initFromCurrentLibrary(){
-    
-    console.log('here');
-    
-    if(this.library.getLibrary().length !== 0){
-      
-      for(let i = 0; i < this.library.getLibrary().length; i++){
-        this.myLibrary.push( {
-          img: this.library.getLibrary()[i].img,
-          hide: false,
-          imdbID: this.library.getLibrary()[i].imdbId,
-          name: this.library.getLibrary()[i].name,
-          year: this.library.getLibrary()[i].year,
-          inLibrary: true
-        });
-        this.moviesInUrl.push(this.library.getLibrary()[i].imdbId);
-      }
-      console.log(this.moviesInUrl);
-    }
+   
+
+
     
     
   }
@@ -148,26 +105,25 @@ export class SharableLibraryComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  async getMovies(movies){
-    // console.log(movies);
+  getMovies(movieId:string){
+    console.log(movieId);
     
-    // console.log(this.library.getLibrary());
-    for(let i = 0; i < movies.length; i++){
-        await this.OMDB.getMovieShortPlot(movies[i])
-        .then(data => {
-        this.myLibrary.push({
-          img: data.Poster,
-          hide: false,
-          imdbID: data.imdbID,
-          name: data.Title,
-          year: data.Year, 
-          inLibrary: true
-        });
-        // console.log(this.library.addToLibrary(this.myLibrary[i].imdbID, this.myLibrary[i].img, this.myLibrary[i].name, this.myLibrary[i].year));
-        this.library.addToLibrary(this.myLibrary[i].imdbID, this.myLibrary[i].img, this.myLibrary[i].name, this.myLibrary[i].year);
+    this.OMDB.getMovieShortPlot(movieId)
+    .then(data => {
+      console.log(data);
+      
+      this.myLibrary.push({
+        img: data.Poster,
+        hide: false,
+        imdbID: data.imdbID,
+        name: data.Title,
+        year: data.Year, 
+        inLibrary: true
       });
-    }
-    // console.log(this.library.getLibrary());
+      this.library.addToLibrary(data.imdbID, data.Poster, data.Title, data.Year);
+      this.moviesInUrl.push(data.imdbID);
+      this.url += `movie=${data.imdbID}&`
+    });
   }
 
   removeFromLibrary(index?:number){
@@ -180,25 +136,30 @@ export class SharableLibraryComponent implements OnInit {
     this.myLibrary[index].hide = true;
     this.library.removeFromLibrary(this.myLibrary[index].imdbID, true);
     this.myLibrary[index].inLibrary = false;    
-    let tempUrl = `/library?`;
-    // console.log(this.moviesInUrl);
-    
     for(let i = 0; i < this.moviesInUrl.length; i++){
       if(this.myLibrary[index].imdbID === this.moviesInUrl[i]){
         this.moviesInUrl.splice(i, 1);
         break;
       }
     }
+    let tempUrl = this.websitename;
     for(let i = 0; i < this.moviesInUrl.length; i++)
       tempUrl += `movie=${this.moviesInUrl[i]}&`;
-    // console.log(this.moviesInUrl);
+    this.url = tempUrl;
     
-    // console.log(this.url);
-    // console.log(tempUrl);
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {movie: this.moviesInUrl}
+    });
+    // this.url = window.location.href;
+    console.log(this.router.url);
+    console.log(this.route.snapshot.params);
     
-    this.location.go(tempUrl);
-    // this.url = tempUrl;
-    this.url = this.websitename + tempUrl;
+    console.log(this.url);
+    
+    
+
     setTimeout(() => this.myLibrary.splice(index, 1), 400);
     if(closeModal)
       this.closeModal();
@@ -218,12 +179,12 @@ export class SharableLibraryComponent implements OnInit {
   // }
 
   copyLink() {
-    this.urlUI.nativeElement.setSelectionRange(0, 99999); /* For mobile devices */
-    this.urlUI.nativeElement.select(); /* For mobile devices */
-    // document.getElementById('url').select();
-
-  /* Copy the text inside the text field */
-  document.execCommand("copy");
+    this.urlUI.nativeElement.disabled = false;
+    this.urlUI.nativeElement.setSelectionRange(0, 99999);
+    this.urlUI.nativeElement.select();
+    this.urlUI.nativeElement.disabled = true;
+    
+    document.execCommand("copy");
     this.snackbar.open('Link Coppied ', 'Okay', {
       duration: 4000,
       verticalPosition: 'bottom',

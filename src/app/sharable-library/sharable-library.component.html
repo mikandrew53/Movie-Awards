@@ -3,8 +3,11 @@
         <mat-icon class="Library-back-btn">arrow_back_ios_new</mat-icon> <span>Back to Search</span>
     </div>
     <h2 class="results-grid-wrapper my-library-title">My Nominations</h2>
-    <div class="link">
-        <input id="url" class="link-wrapper" type="text" value="{{url}}" #urlUi><button class="btn" (click)="copyLink()">Copy Link</button>
+    <div class="link-btn-wrapper">
+        <div class="link-wrapper">
+            <input id="url" class="link" type="text" value="{{url}}" #urlUi disabled>
+        </div> 
+        <button class="btn" (click)="copyLink()">Copy Link</button>
     </div>
 </div>
 <div class="results-grid-wrapper my-library-wrapper">

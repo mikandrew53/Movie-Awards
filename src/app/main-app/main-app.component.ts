@@ -71,11 +71,11 @@ export class MainAppComponent implements OnInit {
   }
 
   goToLibrary() {
-    let libraryIds = [];
+    let libraryIds: Array<string> = [];
     // console.log(this.library.getLibrary());
-    // for(let i = 0; i < this.library.getLibrary().length; i++)
-    //   libraryIds.push(this.library.getLibrary()[i].imdbId);
-    this.router.navigate(['library']);
+    for(let i = 0; i < this.library.getLibrary().length; i++)
+      libraryIds.push(this.library.getLibrary()[i].imdbId);
+    this.router.navigate(['library'], {queryParams: {movie: libraryIds}});
   }
   
   closeAnimation() {

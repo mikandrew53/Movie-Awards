@@ -11,6 +11,7 @@ import {MatDialogModule} from '@angular/material/dialog';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SharableLibraryComponent } from './sharable-library/sharable-library.component';
 import { MainAppComponent } from './main-app/main-app.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { MainAppComponent } from './main-app/main-app.component';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    FontAwesomeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -19,7 +19,7 @@ export class OMDBService {
       movie = movie.trim();
     
     this.searchTerm = movie
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${movie}&type=movie&apikey=a285c6a9`);
+    const OMDPResponse = await fetch(`https://www.omdbapi.com/?s=${movie}&type=movie&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData:searchResponse = await OMDPResponse.json();
         return OMDPResponseData;
@@ -31,7 +31,7 @@ export class OMDBService {
 
   async getNextPage(page) {
    
-   const OMDPResponse = await fetch(`http://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&type=movie&apikey=a285c6a9`);
+   const OMDPResponse = await fetch(`https://www.omdbapi.com/?s=${this.searchTerm}&page=${page}&type=movie&apikey=a285c6a9`);
       if(OMDPResponse.ok){
     const OMDPResponseData:searchResponse = await OMDPResponse.json();
       return OMDPResponseData;
@@ -42,7 +42,7 @@ export class OMDBService {
   async getMovieShortPlot(id:String) {
     // console.log(id);
     
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?i=${id}&apikey=a285c6a9`);
+    const OMDPResponse = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData:MovieByIdResponse = await OMDPResponse.json();
         return OMDPResponseData;
@@ -51,7 +51,7 @@ export class OMDBService {
   }
 
   async getMovieLongPlot(id:String) {
-    const OMDPResponse = await fetch(`http://www.omdbapi.com/?i=${id}&plot=full&apikey=a285c6a9`);
+    const OMDPResponse = await fetch(`https://www.omdbapi.com/?i=${id}&plot=full&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData = await OMDPResponse.json();
         return OMDPResponseData;
