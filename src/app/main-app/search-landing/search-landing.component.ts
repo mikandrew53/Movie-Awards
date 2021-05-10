@@ -63,7 +63,7 @@ export class SearchLandingComponent implements OnInit {
           if(ids[movie.imdbID])
             continue;
           if(movie.Poster === 'N/A')
-            img = './../../assets/video-camera-5368055_1280.png';
+            img = 'assets/video-camera-5368055_1280.png';
           if(movie.Type !== "movie")
             continue;
           if(i < 5){

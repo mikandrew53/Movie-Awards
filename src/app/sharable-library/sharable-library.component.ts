@@ -43,7 +43,9 @@ export class SharableLibraryComponent implements OnInit {
   ngOnInit() {
     let movies = this.route.snapshot.queryParams; 
     if(Object.keys(movies).length === 0){
+      
       for(let i = 0; i < this.library.getLibrary().length; i++){
+
         this.myLibrary.push({
           img: this.library.getLibrary()[i].img,
           hide: false,
@@ -106,8 +108,13 @@ export class SharableLibraryComponent implements OnInit {
   getMovies(movieId:string){
     this.OMDB.getMovieShortPlot(movieId)
     .then(data => {
+      let img;
+      if(data.Poster === 'N/A')
+        img = 'assets/video-camera-5368055_1280.png';
+      else 
+        img = data.Poster
       this.myLibrary.push({
-        img: data.Poster,
+        img: img,
         hide: false,
         imdbID: data.imdbID,
         name: data.Title,

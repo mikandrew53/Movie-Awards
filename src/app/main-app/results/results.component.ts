@@ -189,7 +189,7 @@ export class ResultsComponent implements OnInit {
           let movie = data.Search[i];
           let img = movie.Poster;
           if(movie.Poster === 'N/A')
-            img = './../../assets/video-camera-5368055_1280.png';
+            img = 'assets/video-camera-5368055_1280.png';
           if(movie.Type !== "movie" || ids[movie.imdbID])
             continue;
           currentSuggestions.push({
@@ -254,7 +254,7 @@ export class ResultsComponent implements OnInit {
           if(this.resultIds[movie.imdbID])
             continue;
           if(movie.Poster === 'N/A')
-            img = './../../assets/video-camera-5368055_1280.png';
+            img = 'assets/video-camera-5368055_1280.png';
           if(movie.Type !== "movie")
             continue;
 
