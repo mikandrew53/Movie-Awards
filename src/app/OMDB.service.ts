@@ -40,8 +40,6 @@ export class OMDBService {
   }
 
   async getMovieShortPlot(id:String) {
-    // console.log(id);
-    
     const OMDPResponse = await fetch(`https://www.omdbapi.com/?i=${id}&apikey=a285c6a9`);
     if(OMDPResponse.ok){
         const OMDPResponseData:MovieByIdResponse = await OMDPResponse.json();

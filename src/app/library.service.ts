@@ -21,14 +21,9 @@ export class LibraryService {
     }else {
       this.library = [];
     }
-    // console.log(this.index);
-    
   }
 
   addToLibrary (movieId: string, imgUrl:string, name: string, year: string){
-    // console.log(movieId);
-    
-    // console.log(this.libraryIds)
     if(this.library.length < 5 && !this.libraryIds[movieId]){
       this.library.push({
         imdbId: movieId,

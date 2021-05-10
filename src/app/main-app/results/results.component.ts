@@ -38,8 +38,6 @@ export class ResultsComponent implements OnInit {
   ngOnInit(): void {
     this.numMoviesInLibrary = this.library.getLibrary().length;
     this.results = this.OMDB.getResults();
-    console.log(this.results);
-    
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
     this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
@@ -154,7 +152,7 @@ export class ResultsComponent implements OnInit {
   onKeyUp(e?) {
     if(e && e.key === "Enter"){
       this.page = 2;
-      this.search.nativeElement.blur()
+      this.search.nativeElement.blur();
       this.inputFocus = false;
       this.results = [...this.suggestions];
       this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;

@@ -25,10 +25,10 @@ export class SharableLibraryComponent implements OnInit {
   movie:movieFullInfo;
   modalActive = false;
   dialogMovieIndex:number;
-  // url = 'https://shoppies-5b855.firebaseapp.com/';
-  // websitename = 'https://shoppies-5b855.firebaseapp.com/library?';
-  url = 'http://192.168.2.73:4200';
-  websitename = 'http://192.168.2.73:4200/library?';
+  url = 'https://shoppies-5b855.firebaseapp.com/';
+  websitename = 'https://shoppies-5b855.firebaseapp.com/library?';
+  // url = 'http://192.168.2.73:4200';
+  // websitename = 'http://192.168.2.73:4200/library?';
   moviesInUrl: Array<string> = []
   @ViewChild('urlUi', {static: true}) urlUI: ElementRef;
 
@@ -65,10 +65,8 @@ export class SharableLibraryComponent implements OnInit {
         tempUrl += `movie=${this.moviesInUrl[i]}&`;
       this.url = tempUrl;
     }else {
-      console.log(movies);
       if(!Array.isArray(movies.movie)){
         movies = {movie: [movies.movie]} 
-        console.log(movies);
       }
       this.library.setLibrary([]);
       this.library.resetLibraryIds();
@@ -106,12 +104,8 @@ export class SharableLibraryComponent implements OnInit {
   }
 
   getMovies(movieId:string){
-    console.log(movieId);
-    
     this.OMDB.getMovieShortPlot(movieId)
     .then(data => {
-      console.log(data);
-      
       this.myLibrary.push({
         img: data.Poster,
         hide: false,
@@ -153,11 +147,6 @@ export class SharableLibraryComponent implements OnInit {
       queryParams: {movie: this.moviesInUrl}
     });
     // this.url = window.location.href;
-    console.log(this.router.url);
-    console.log(this.route.snapshot.params);
-    
-    console.log(this.url);
-    
     
 
     setTimeout(() => this.myLibrary.splice(index, 1), 400);
@@ -183,6 +172,7 @@ export class SharableLibraryComponent implements OnInit {
     this.urlUI.nativeElement.setSelectionRange(0, 99999);
     this.urlUI.nativeElement.select();
     this.urlUI.nativeElement.disabled = true;
+    this.urlUI.nativeElement.blur();
     
     document.execCommand("copy");
     this.snackbar.open('Link Coppied ', 'Okay', {

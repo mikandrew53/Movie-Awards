@@ -27,8 +27,6 @@ export class MainAppComponent implements OnInit {
 
   ngOnInit(): void {
     if(this.library.getLibrary().length !== 0){
-      // console.log(this.library.getLibrary());
-      
       for(let i = 0; i < this.library.getLibrary().length; i++){
         this.libraryUi.push( {
           img: this.library.getLibrary()[i].img,
@@ -51,7 +49,6 @@ export class MainAppComponent implements OnInit {
     });
 
     this.library.movieRemoved.subscribe(data => {
-      // console.log('yp');
       
         if(!data.removedFromLibrary){
           for(let i = 0; i < this.libraryUi.length; i++){
@@ -72,7 +69,6 @@ export class MainAppComponent implements OnInit {
 
   goToLibrary() {
     let libraryIds: Array<string> = [];
-    // console.log(this.library.getLibrary());
     for(let i = 0; i < this.library.getLibrary().length; i++)
       libraryIds.push(this.library.getLibrary()[i].imdbId);
     this.router.navigate(['library'], {queryParams: {movie: libraryIds}});
