@@ -34,6 +34,70 @@ p{
     margin: 0;
 }
 
+.my-library-title {
+    color: $accent-color;
+    font-size: 2rem;
+    padding: 0 !important;
+    margin-bottom: 20px;
+    // margin-top: 20px;
+}
+.go-to-library {
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.library-back-btn-wrapper {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    width: fit-content;
+    color: #fff;
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    transition: transform 200ms ease-in-out;
+    &:hover {
+        transform: scale(1.05);
+    }
+}
+
+.my-library-wrapper {
+    height: 65vh;
+    overflow-y: scroll;
+}
+.library-top{
+    height: 35vh;
+    max-height: 200px;
+}
+.link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    // margin-left: 40px;
+    .link-wrapper {
+        max-width: 50vw;
+        border-radius: 4px;
+        padding: 0 10px;
+        height: 100%;
+        box-shadow: 2px 4px 5px 2px rgb(0 0 0 / 20%);
+        display: flex;
+        align-items: center;
+        color: #fff;
+        background-color: $background-colour;
+        outline: none;
+        border: none;
+        overflow-y: scroll;
+        // pointer-events: none;
+    }
+    .btn {
+        height: 100%;
+        &:hover {
+            transform: scale(1);
+        }
+    }
+}
 
 
 .chosen-movies-toggle{
@@ -860,6 +924,23 @@ p{
         }
     }
 }
+
+@media(max-height: 812px){
+    .link {
+        height: 40px;
+        .btn {
+            padding: 5px 10px;
+        }
+    }
+    .my-library-wrapper {
+        height: 50vh;
+        overflow-y: scroll;
+    }
+}
+@media(max-height: 400px){
+    .link { height: 30px;}
+}
+
 
 @media(max-height: 500px){
     .search-wrapper {

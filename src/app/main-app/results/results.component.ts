@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { LibraryService } from '../library.service';
-import { OMDBService } from '../OMDB.service';
+import { LibraryService } from './../../library.service';
+import { OMDBService } from '../../OMDB.service';
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { movieSuggestion } from './../models/movieSuggestion.model';
-import { movieFullInfo } from './../models/movieFullInfo.model'
+import { movieSuggestion } from './../../models/movieSuggestion.model';
+import { movieFullInfo } from './../../models/movieFullInfo.model';
 
 @Component({
   selector: 'app-results',
@@ -38,6 +38,8 @@ export class ResultsComponent implements OnInit {
   ngOnInit(): void {
     this.numMoviesInLibrary = this.library.getLibrary().length;
     this.results = this.OMDB.getResults();
+    console.log(this.results);
+    
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
     this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;

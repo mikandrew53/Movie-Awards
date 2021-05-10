@@ -1,0 +1,42 @@
+<div class="library-top">
+    <div class="library-back-btn-wrapper" (click)="backToSearch()">
+        <mat-icon class="Library-back-btn">arrow_back_ios_new</mat-icon> <span>Back to Search</span>
+    </div>
+    <h2 class="results-grid-wrapper my-library-title">My Nominations</h2>
+    <div class="link">
+        <input id="url" class="link-wrapper" type="text" value="{{url}}" #urlUi><button class="btn" (click)="copyLink()">Copy Link</button>
+    </div>
+</div>
+<div class="results-grid-wrapper my-library-wrapper">
+    <div class="results-wrapper">
+        <div class="img-wrapper" *ngFor="let movie of myLibrary; let i = index;" [ngClass]="{'hide': movie.hide}">
+                <mat-icon class="add-btn remove-btn" (click)="removeFromLibrary(i)">remove</mat-icon>
+                <img src="{{movie.img}}" alt="" (click)="openDialog(i)">
+                <p class="movie-name">{{movie.name}} {{movie.year}}</p>
+        </div>
+    </div>
+</div>
+
+<div class="more-info-modal" [ngClass]="{'more-info-modal-active': modalActive}">
+    <mat-icon class="back-btn" (click)="closeModal()">clear</mat-icon>
+    <div class="info" *ngIf="movie.active">
+         <img *ngIf="movie.img" src="{{movie.img}}" alt=""> 
+         <div class="movie-data">
+             <h3 *ngIf="movie.name !== ''">{{movie.name}}</h3>
+             <div class="movie-data-content">
+                <div class="lds-ring" *ngIf="movie.loading"><div></div><div></div><div></div><div></div></div>
+                <div *ngIf="movie.actors !== ''" class="content-wrapper"><p class="description">Actors:</p><p class="content"> {{movie.actors}}</p></div> 
+                <div *ngIf="movie.director !== ''" class="content-wrapper"><p class="description">Directors:</p><p class="content"> {{movie.director}}</p></div> 
+                <div *ngIf="movie.genre !== ''" class="content-wrapper"><p class="description">Genre:</p><p class="content"> {{movie.genre}}</p></div> 
+                <div *ngIf="movie.language !== ''" class="content-wrapper"><p class="description">Language:</p><p class="content"> {{movie.language}}</p></div>
+                <div *ngIf="movie.plot !== ''" class="content-wrapper"><p class="description">Plot:</p><p class="content"> {{movie.plot}}</p></div> 
+                <div *ngIf="movie.rated !== ''" class="content-wrapper"><p class="description">IMDB Rating:</p> <p class="content"> {{movie.rated}}</p></div> 
+                <div *ngIf="movie.releaseDate !== ''" class="content-wrapper"><p class="description">Release Date:</p> <p class="content"> {{movie.releaseDate}}</p></div>
+                <div *ngIf="movie.runtime !== ''" class="content-wrapper"><p class="description">Runtime:</p><p class="content"> {{movie.runtime}}</p></div>
+                <div *ngIf="movie.year !== ''" class="content-wrapper"><p class="description">Year:</p><p class="content"> {{movie.year}}</p></div>
+            </div>
+            <button class="add-btn remove-btn" *ngIf="movie.inLibrary" (click)="removeFromLibrary()">Remove</button>
+        </div>
+    </div>
+</div>
+<div [ngClass]="{'overlay': modalActive}" class="modal-overlay" (click)="closeModal()"></div>

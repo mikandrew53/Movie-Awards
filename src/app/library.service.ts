@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-
-interface libraryItem {
-  imdbId: string,
-  img: string,
-  name: string,
-  year: string
-}
+import { from, Subject } from 'rxjs';
+import { libraryItem } from './../app/models/LibraryItem.model'
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +26,9 @@ export class LibraryService {
   }
 
   addToLibrary (movieId: string, imgUrl:string, name: string, year: string){
+    // console.log(movieId);
+    
+    // console.log(this.libraryIds)
     if(this.library.length < 5 && !this.libraryIds[movieId]){
       this.library.push({
         imdbId: movieId,
@@ -69,8 +66,15 @@ export class LibraryService {
     localStorage.setItem('libraryData', JSON.stringify(this.library));
     
   }
-
+  
   getLibrary(){
     return this.library;
+  }
+  setLibrary(library) {
+    this.library = library;
+  }
+
+  resetLibraryIds(){
+    this.libraryIds = {};
   }
 }

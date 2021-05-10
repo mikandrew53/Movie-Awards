@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { OMDBService } from '../OMDB.service';
+import { OMDBService } from '../../OMDB.service';
 interface movieSuggestion {
   name: string,
   img: string,
