@@ -1,3 +1,16 @@
+Demo: https://shoppies-5b855.firebaseapp.com/
+
+This project was a challenge that was put forth by Shopify. It’s objective is to provide a platform for employees to nominate 5 movies for The Shoppies: Movie Awards for entrepreneurs, as well as provide sharable links that the employees can use to share their nominations. 
+The OMDB api was used to fetch the movies.
+
+Angular was used to build out the project and hosted using Firebase. 
+
+Other technologies used:
+Sass 
+Angular Material 
+Font Awesome icons
+
+
 # MovieAwards
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.0.4.
