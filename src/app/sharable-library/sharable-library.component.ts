@@ -222,10 +222,10 @@ export class SharableLibraryComponent implements OnInit {
     this.movie.active = true;
     this.modalActive = true;
     this.movie.inLibrary = this.library.checkIfMovieInLibrary(this.movie.imdbID);
-    document.body.style.overflowY = 'hidden';
-    document.getElementById('results').style.overflowY = 'hidden';
-    if(window.innerHeight === 500 || window.innerWidth === 670)
-      document.getElementById('results').style.position = 'fixed';
+    // document.body.style.overflowY = 'hidden';
+    // document.getElementById('results').style.overflowY = 'hidden';
+    // if(window.innerHeight === 500 || window.innerWidth === 670)
+      // document.getElementById('results').style.position = 'fixed';
   }
 
   closeModal(): void {
