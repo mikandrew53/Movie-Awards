@@ -233,9 +233,26 @@ export class SharableLibraryComponent implements OnInit {
     setTimeout(() => {
       this.movie.active = false;
     }, 250);
-    document.body.style.overflowY = 'auto';
-    document.getElementById('results').style.overflowY = 'auto';
-    document.getElementById('results').style.position = 'relative';
+    // document.body.style.overflowY = 'auto';
+    // document.getElementById('results').style.overflowY = 'auto';
+    // document.getElementById('results').style.position = 'relative';
+    this.movie = {
+      name: '',
+      img: '',
+      imdbID: '',
+      inLibrary: false,
+      actors: '',
+      plot: '',
+      language: '',
+      year: '',
+      rated: '',
+      releaseDate: '',
+      runtime: '',
+      genre: '',
+      director: '',
+      active: false,
+      loading: false
+    }
   }
 
 }

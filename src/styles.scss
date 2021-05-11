@@ -765,6 +765,14 @@ p{
     }
 }
 
+.movie-data-content {
+    display: flex;
+    flex-direction: column;
+    .lds-ring {
+        align-self: center;
+    }
+}
+
 .more-info-modal-active {
     pointer-events:all;
     opacity: 1;

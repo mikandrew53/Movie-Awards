@@ -48,6 +48,7 @@
              <div class="movie-data">
                  <h3 *ngIf="movie.name !== ''">{{movie.name}}</h3>
                  <div class="movie-data-content">
+                    <!-- <div class="lds-ring" ><div></div><div></div><div></div><div></div></div> -->
                     <div class="lds-ring" *ngIf="movie.loading"><div></div><div></div><div></div><div></div></div>
                     <div *ngIf="movie.actors !== ''" class="content-wrapper"><p class="description">Actors:</p><p class="content"> {{movie.actors}}</p></div> 
                     <div *ngIf="movie.director !== ''" class="content-wrapper"><p class="description">Directors:</p><p class="content"> {{movie.director}}</p></div> 
