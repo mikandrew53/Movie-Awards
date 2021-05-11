@@ -6,8 +6,8 @@ The OMDB api was used to fetch the movies.
 Angular was used to build out the project and hosted using Firebase. 
 
 Other technologies used:
-Sass 
-Angular Material 
+Sass, 
+Angular Material,
 Font Awesome icons
 
 
