@@ -37,9 +37,12 @@ p{
 .github-link {
     color: #fff;
     cursor: pointer;
-    position: absolute;
-    right: 47px;
-    top: 18px;
+    // margin-left: 20px;
+    // margin-top: 20px;
+    position: fixed;
+    // right: 47px;
+    top: 46px;
+    left: 20px;
     // transform: scale(2);
     transition: transform 150ms ease-in-out;
     .icon {
@@ -220,6 +223,7 @@ p{
     min-width: 100vw;
     display: flex;
     justify-content: center;
+    overflow-y: hidden;
     // align-items: center;
 }
 
@@ -412,7 +416,7 @@ p{
     justify-content: center;
     width: 100%;
     .form-group{
-        width: 70%;
+        width: 85%;
         // margin-top: 5px;
         // position: relative;
         position: fixed;
@@ -923,8 +927,8 @@ p{
         }
     }
     .github-link {
-        right: 10px;
-        top: 18px;
+        top: 71px;
+        left: 20px;
         // transform: scale(2);
         transition: transform 150ms ease-in-out;
         .icon {

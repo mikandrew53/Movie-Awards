@@ -95,7 +95,7 @@ export class ResultsComponent implements OnInit {
       if (this.numMoviesInLibrary === 5){
         this.snackbar.open('5 Movies Nominated!', 'Okay', {
           duration: 4000,
-          verticalPosition: 'bottom',
+          verticalPosition: 'top',
         });
       }
     });

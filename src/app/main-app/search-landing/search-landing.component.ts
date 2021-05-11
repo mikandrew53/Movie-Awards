@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { OMDBService } from '../../OMDB.service';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
 interface movieSuggestion {
   name: string,
   img: string,
@@ -19,6 +20,7 @@ export class SearchLandingComponent implements OnInit {
   results: Array<movieSuggestion> = [];
   suggestions:Array<movieSuggestion> = []
   loading:boolean = false;
+  faGithub = faGithub;
   numberOfMoviesFiltered:number = 0;
 
   constructor(private OMDB: OMDBService, private router: Router){

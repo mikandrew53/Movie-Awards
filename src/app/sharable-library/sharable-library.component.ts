@@ -175,17 +175,17 @@ export class SharableLibraryComponent implements OnInit {
   // }
 
   copyLink() {
+    document.execCommand("copy");
+    this.snackbar.open('Link Coppied ', 'Okay', {
+      duration: 2000,
+      verticalPosition: 'top',
+    });
     this.urlUI.nativeElement.disabled = false;
     this.urlUI.nativeElement.setSelectionRange(0, 99999);
     this.urlUI.nativeElement.select();
     this.urlUI.nativeElement.disabled = true;
     this.urlUI.nativeElement.blur();
     
-    document.execCommand("copy");
-    this.snackbar.open('Link Coppied ', 'Okay', {
-      duration: 4000,
-      verticalPosition: 'bottom',
-    });
   }
 
   openDialog(i): void {
