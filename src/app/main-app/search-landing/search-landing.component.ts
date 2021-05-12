@@ -41,6 +41,7 @@ export class SearchLandingComponent implements OnInit {
       this.suggestions = [];
       return;
     }
+    this.suggestions = [];
     this.loading = true;
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
@@ -48,7 +49,7 @@ export class SearchLandingComponent implements OnInit {
       this.loading = false;
       if(data.Response === 'True' ){
         this.numberOfMoviesFiltered = 0;
-        this.suggestions = [];
+        // this.suggestions = [];
         this.results = [];
         this.OMDB.setResults(this.results);
         this.OMDB.setSearchData(data);

@@ -8,7 +8,7 @@
             <div class="form-group" [ngClass]="{'padding-bottom': suggestions.length > 0}">
                 <input class="input" type="text" autocomplete="off" name="search" required (keyup)="onKeyUp($event)" #search>
                 <label for="search" class="label-placeholder" >
-                    <span class="placeholder">Search OMDPB</span>
+                    <span class="placeholder">Search OMDB</span>
                 </label>
                 <div class="suggestions" *ngIf="suggestions.length > 0 || loading">
                     <ul>

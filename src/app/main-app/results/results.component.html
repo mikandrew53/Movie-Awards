@@ -20,7 +20,8 @@
 
     <div class="results" (click)="onFocusOut()" id="results">
         <div class="results-grid-wrapper">
-            <div class="results-wrapper" >
+            <div class="lds-ring" *ngIf="resultsLoading"><div></div><div></div><div></div><div></div></div>
+            <div class="results-wrapper" *ngIf="results.length > 0">
                 <div class="img-wrapper" *ngFor="let result of results; let i = index;">
                     <mat-icon class="add-btn" (click)="addToLibrary(i)" *ngIf="!result.inLibrary && numMoviesInLibrary < 5">add</mat-icon>
                     <mat-icon class="add-btn remove-btn" *ngIf="result.inLibrary" (click)="removeFromLibrary(i)">remove</mat-icon>
@@ -30,13 +31,13 @@
                         <mat-icon class="check">check</mat-icon>
                     </div>
                 </div>
-                <div class="lds-ring" *ngIf="moreLoading"><div></div><div></div><div></div><div></div></div>
-                <div class="more" *ngIf="isThereMoreResults && !moreLoading" (click)="moreClicked()">
-                    <p>More</p>
+                <div class="more" *ngIf="isThereMoreResults || moreLoading" (click)="moreClicked()">
+                    <div class="lds-ring" *ngIf="moreLoading"><div></div><div></div><div></div><div></div></div>
+                    <p *ngIf="!moreLoading">More</p>
                 </div>
             </div>
         </div>
-        <div *ngIf="!(results.length > 0)" class="noResults">
+        <div *ngIf="!(results.length > 0) && !resultsLoading" class="noResults">
             <p>Search for a Movie!</p>
         </div>
     </div>
@@ -48,7 +49,6 @@
              <div class="movie-data">
                  <h3 *ngIf="movie.name !== ''">{{movie.name}}</h3>
                  <div class="movie-data-content">
-                    <!-- <div class="lds-ring" ><div></div><div></div><div></div><div></div></div> -->
                     <div class="lds-ring" *ngIf="movie.loading"><div></div><div></div><div></div><div></div></div>
                     <div *ngIf="movie.actors !== ''" class="content-wrapper"><p class="description">Actors:</p><p class="content"> {{movie.actors}}</p></div> 
                     <div *ngIf="movie.director !== ''" class="content-wrapper"><p class="description">Directors:</p><p class="content"> {{movie.director}}</p></div> 

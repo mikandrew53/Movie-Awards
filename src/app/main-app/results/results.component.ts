@@ -32,6 +32,10 @@ export class ResultsComponent implements OnInit {
   numberOfResultsFiltered:number = 0;
   numberOfTotalResultsInResults: number = 0;
   resultIds = {};
+  suggestionClickedBoolean: boolean = false;
+  resultsLoading = false;
+  enterClicked = false;
+  
   
   constructor(private OMDB: OMDBService, private router: Router, private library: LibraryService, private snackbar:MatSnackBar) { }
 
@@ -41,12 +45,14 @@ export class ResultsComponent implements OnInit {
     this.numberOfTotalResultsInResults = this.OMDB.getTotalResults();
     this.numberOfResultsFiltered = this.OMDB.getTotalResultsFiltered();
     this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
-    if(this.results.length === 0)
+    if(this.results.length === 0){
       this.isThereMoreResults = false;
+    }
     this.search.nativeElement.value = this.OMDB.getSearchTerm();
     if(!(this.search.nativeElement.value.length < 3 && this.results.length === 0)){
       this.moreLoading = true;
-      this.searchMovies({key: "Enter"});
+      this.enterClicked = true;
+      this.searchMovies();
     }
 
 
@@ -91,12 +97,23 @@ export class ResultsComponent implements OnInit {
     });
 
     this.library.indexChanged.subscribe(index => {
+      if(this.router.url !== '/results')
+        return;
       this.numMoviesInLibrary = index
       if (this.numMoviesInLibrary === 5){
-        this.snackbar.open('5 Movies Nominated!', 'Okay', {
-          duration: 4000,
-          verticalPosition: 'top',
-        });
+        if(this.modalActive){
+          this.snackbar.open('5 Movies Nominated!', 'Okay', {
+            duration: 4000,
+            verticalPosition: 'top',
+          });          
+        }else {
+          setTimeout(() => {
+            this.snackbar.open('5 Movies Nominated!', 'Okay', {
+              duration: 4000,
+              verticalPosition: 'top',
+            });          
+          }, 600);
+        }
       }
     });
        
@@ -145,55 +162,76 @@ export class ResultsComponent implements OnInit {
     this.modalActive = false;
     setTimeout(() => {
       this.movie.active = false;
+      this.movie = {
+        name: '',
+        img: '',
+        imdbID: '',
+        inLibrary: false,
+        actors: '',
+        plot: '',
+        language: '',
+        year: '',
+        rated: '',
+        releaseDate: '',
+        runtime: '',
+        genre: '',
+        director: '',
+        active: false,
+        loading: false
+      }
     }, 250);
     document.body.style.overflowY = 'auto';
     document.getElementById('results').style.overflowY = 'auto';
     document.getElementById('results').style.position = 'relative';
-    this.movie = {
-      name: '',
-      img: '',
-      imdbID: '',
-      inLibrary: false,
-      actors: '',
-      plot: '',
-      language: '',
-      year: '',
-      rated: '',
-      releaseDate: '',
-      runtime: '',
-      genre: '',
-      director: '',
-      active: false,
-      loading: false
-    }
   }
 
   onKeyUp(e?) {
+    this.suggestionsLoading = true;
     if(e && e.key === "Enter"){
+      this.results = [];
+      if(this.suggestions.length > 0){
+        this.results = [...this.suggestions];
+      }else{
+        this.resultsLoading = true;
+        this.enterClicked = true;
+      }
       this.page = 2;
       this.search.nativeElement.blur();
       this.inputFocus = false;
-      this.results = [...this.suggestions];
+      this.suggestionsLoading = false;
+      // this.results = [...this.suggestions];
       this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
       this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
       if(this.results.length === 0)
         this.isThereMoreResults = false;
-      if(this.search.nativeElement.value.length < 3 && this.results.length === 0){
-        this.isThereMoreResults = false;
-        return;
-      }
+      return;
     }
+    if(this.search.nativeElement.value.length < 3){
+      this.suggestions = [];
+      this.isThereMoreResults = false;
+      return;
+    }
+      
     if(e && e.keyCode == 32){
       return;
     }
-    this.suggestionsLoading = true;
+    
     this.searchMovies(e);
   }
   
   searchMovies(e?) {
     let movieToSearch = this.search.nativeElement.value;
+    console.log(this.enterClicked);
+
+    this.suggestions = [];
+    if(this.enterClicked){
+      this.resultsLoading = true;
+    }
+    console.log(movieToSearch);
+    
     this.OMDB.searchMovie(movieToSearch)
     .then(data => {
+      console.log(data);
       this.numberOfTotalResultsInSuggestions = data.totalResults;
       this.suggestionsLoading = false;
       this.moreLoading = false;
@@ -225,9 +263,13 @@ export class ResultsComponent implements OnInit {
         }
         
         this.suggestions = currentSuggestions;
-        if(e && e.key === "Enter"){
+        if(this.enterClicked){
+          this.enterClicked = false;
+          console.log('Enter is Clicked!');
+          
           this.results = [...this.suggestions];
           this.resultIds = {...ids};
+          this.resultsLoading = false;
           this.numberOfTotalResultsInResults = data.totalResults;
           this.numberOfResultsFiltered = this.numberOfSuggestionsfiltered;
           this.numberOfResultsFiltered < this.numberOfTotalResultsInResults ? this.isThereMoreResults = true: this.isThereMoreResults = false;
@@ -243,6 +285,7 @@ export class ResultsComponent implements OnInit {
   }
 
   suggestionClicked(i){
+    this.suggestionClickedBoolean = true;
     this.search.nativeElement.value = this.suggestions[i].name;
     this.inputFocus = false;
     this.OMDB.setSearchTerm(this.suggestions[i].name);
@@ -305,7 +348,10 @@ export class ResultsComponent implements OnInit {
 
   onFocus(){
     this.inputFocus = true;
-    this.onKeyUp(false);
+    if(this.suggestionClickedBoolean){
+      this.suggestionClickedBoolean = false;
+      this.onKeyUp(false);
+    }
   }
   onFocusOut(){
     if(this.search.nativeElement !== document.activeElement)
@@ -338,6 +384,11 @@ export class ResultsComponent implements OnInit {
     this.library.removeFromLibrary(this.results[index].imdbID);  
     this.results[index].animate = false;
     this.results[index].inLibrary = false;    
+  }
+
+  ngOnDestroy(): void {
+    // this.library.indexChanged.unsubscribe();
+    // this.library.movieRemoved.unsubscribe();
   }
 }
 
